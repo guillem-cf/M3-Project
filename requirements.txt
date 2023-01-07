@@ -1,8 +1,10 @@
 # --------- Libraries --------- #
-numpy>=1.24.0
+numpy>=1.24.1
 scikit-learn>=1.2.0
-opencv-contrib-python>=4.7
+opencv-contrib-python>=4.7.0.68
 optuna>=3.0.5
+pandas>=1.5.2
+matplotlib>=3.6.2
 plotly>=5.11.0
 ipywidgets
 notebook
