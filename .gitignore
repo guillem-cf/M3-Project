@@ -1,3 +1,16 @@
+Week2/
+test_descriptors.pkl
+
+Week2/
+test_label_descriptors.pkl
+
+Week2/
+train_descriptors.pkl
+
+Week2/
+train_label_descriptors.pkl
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
