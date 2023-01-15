@@ -1,16 +1,4 @@
-Week2/
-test_descriptors.pkl
-
-Week2/
-test_label_descriptors.pkl
-
-Week2/
-train_descriptors.pkl
-
-Week2/
-train_label_descriptors.pkl
-
-
+*.pkl
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -71,8 +59,7 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
+
 
 # Flask stuff:
 instance/
