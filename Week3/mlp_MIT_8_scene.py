@@ -1,10 +1,9 @@
-import argparse
-
 import matplotlib
 from keras import Sequential, Model
 from keras.layers import Reshape, Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model
+import argparse
 
 from utils import *
 
@@ -16,9 +15,9 @@ import numpy as np
 parser = argparse.ArgumentParser(description='MIT',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('--DATASET_DIR', type=str, help='Dataset path', default='/home/mcv/datasets/MIT_split')
-parser.add_argument('--PATCHES_DIR', type=str, help='Patches path', default='/home/group10/m3/data/MIT_split_patches')
-parser.add_argument('--MODEL_FNAME', type=str, default='/home/group10/m3/patch_based_mlp.h5', help='Model path')
+parser.add_argument('--DATASET_DIR', type=str, help='Dataset path', default='./MIT_split')
+parser.add_argument('--PATCHES_DIR', type=str, help='Patches path', default='./MIT_split_patches')
+parser.add_argument('--MODEL_FNAME', type=str, default='./patch_based_mlp.h5', help='Model path')
 parser.add_argument('--PATCH_SIZE', type=int, help='Indicate Patch Size', default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)

@@ -1,10 +1,9 @@
 from __future__ import print_function
 
-import argparse
-
 from keras.layers import Dense, Reshape
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
+import argparse
 
 from utils import *
 
