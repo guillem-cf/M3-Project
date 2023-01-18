@@ -16,15 +16,9 @@ parser = argparse.ArgumentParser(
     description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
 )
 
-parser.add_argument(
-    "--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split"
-)
-parser.add_argument(
-    "--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches"
-)
-parser.add_argument(
-    "--MODEL_FNAME", type=str, default="./patch_based_mlp.h5", help="Model path"
-)
+parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
+parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
+parser.add_argument("--MODEL_FNAME", type=str, default="./patch_based_mlp.h5", help="Model path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
@@ -66,9 +60,7 @@ plot_model(model, to_file="modelMLP.png", show_shapes=True, show_layer_names=Tru
 print("Done!\n")
 
 if os.path.exists(args.MODEL_FNAME):
-    print(
-        "WARNING: model file " + args.MODEL_FNAME + " exists and will be overwritten!\n"
-    )
+    print("WARNING: model file " + args.MODEL_FNAME + " exists and will be overwritten!\n")
 
 print("Start training...\n")
 
@@ -133,9 +125,7 @@ history = model.fit(
 print("Done!\n")
 
 print("Saving the model into " + args.MODEL_FNAME + " \n")
-model.save_weights(
-    args.MODEL_FNAME
-)  # always save your weights after training or during training
+model.save_weights(args.MODEL_FNAME)  # always save your weights after training or during training
 print("Done!\n")
 
 # summarize history for accuracy
