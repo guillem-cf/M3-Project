@@ -1,16 +1,16 @@
-import matplotlib
-from keras import Sequential, Model
-from keras.layers import Reshape, Dense
-from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import plot_model
 import argparse
 
+import matplotlib
+from keras import Model, Sequential
+from keras.layers import Dense, Reshape
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import plot_model
 from utils import *
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from PIL import Image
 import numpy as np
+from PIL import Image
 
 parser = argparse.ArgumentParser(
     description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
