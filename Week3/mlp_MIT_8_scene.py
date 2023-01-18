@@ -2,13 +2,14 @@ import argparse
 
 import matplotlib
 import tensorflow as tf
+import wandb
 from keras import Model, Sequential
 from keras.layers import Dense, Reshape
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model
-from utils import *
-import wandb
 from wandb.keras import WandbCallback
+
+from utils import *
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -18,14 +19,22 @@ from PIL import Image
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
-    
+
 parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
 parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp.h5", help="Model path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
+parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=100)
+parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.001)
+parser.add_argument("--MOMENTUM", type=float, help="Indicate Momentum", default=0.9)
+parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.5)
+parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.0001)
+parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="adam")
+parser.add_argument("--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy")
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
+parser.add_argument("--experiment_name", type=str, help="Experiment name", default="baseline")
 args = parser.parse_args()
 
 # user defined variables
@@ -36,7 +45,20 @@ DATASET_DIR = '/home/mcv/datasets/MIT_split'
 MODEL_FNAME = '/home/group10/m3/my_first_mlp.h5'
 """
 
-wandb.init(project="M3",config={"hyper": "parameter"})
+config = dict(
+    learning_rate=args.LEARNING_RATE,
+    momentum=args.MOMENTUM,
+    architecture="CNN",
+    dataset="MIT",
+    optimizer=args.OPTIMIZER,
+    loss=args.LOSS,
+)
+
+wandb.init(
+    project="M3",
+    config=config,
+    name=args.experiment_name,
+)
 
 PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
 
@@ -48,17 +70,10 @@ print("Building MLP model...\n")
 
 # Build the Multi Layer Perceptron model
 model = Sequential()
-model.add(
-    Reshape(
-        (args.IMG_SIZE * args.IMG_SIZE * 3,),
-        input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3),
-        name="first",
-    )
-)
+model.add(Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name="first"))
 model.add(Dense(units=2048, activation="relu", name="second"))
-# model.add(Dense(units=1024, activation='relu'))
 model.add(Dense(units=8, activation="softmax"))
-model.compile(loss="categorical_crossentropy", optimizer="sgd", metrics=["accuracy"])
+model.compile(loss=args.LOSS, optimizer=args.OPTIMIZER, metrics=["accuracy"])
 
 print(model.summary())
 plot_model(model, to_file="images/modelMLP.png", show_shapes=True, show_layer_names=True)
