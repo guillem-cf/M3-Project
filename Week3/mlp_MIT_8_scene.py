@@ -1,9 +1,10 @@
+import argparse
+
 import matplotlib
 from keras import Sequential, Model
 from keras.layers import Reshape, Dense
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model
-import argparse
 
 from utils import *
 

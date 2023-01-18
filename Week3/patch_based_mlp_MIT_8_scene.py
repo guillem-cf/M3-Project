@@ -1,12 +1,12 @@
 from __future__ import print_function
 
+import argparse
+
 from keras.layers import Dense, Reshape
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
-import argparse
 
 from utils import *
-
 
 parser = argparse.ArgumentParser(description='MIT',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -27,6 +27,7 @@ PATCHES_DIR = '/home/group10/m3/data/MIT_split_patches' + str(PATCH_SIZE)
 MODEL_FNAME = '/home/group10/m3/patch_based_mlp.h5'
 """
 PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
+
 
 def build_mlp(input_size=args.PATCH_SIZE, phase='TRAIN'):
     model = Sequential()

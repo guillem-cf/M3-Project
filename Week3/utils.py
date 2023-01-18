@@ -1,8 +1,9 @@
 # from __future__ import print_function
-import os, sys
+import os
+
 import numpy as np
-from sklearn.feature_extraction import image
 from PIL import Image
+from sklearn.feature_extraction import image
 
 
 def softmax(x):
