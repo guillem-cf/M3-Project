@@ -27,4 +27,4 @@ jobs:
           echo "Running black"
           black -l 100 --check .
           echo "Running flake8"
-          flake8 .
+          flake8 --max-line-length 100 .
