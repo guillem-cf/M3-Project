@@ -16,4 +16,4 @@ def convertToUnix(source, destination):
     print("Done. Saved %s bytes." % (len(content) - outsize))
 
 
-convertToUnix("MIT_split/train_labels.dat", "MIT_split/train_labels_unix.dat")
+convertToUnix("MIT_split/train_labels.dat", "MIT_split/train_labels.dat")

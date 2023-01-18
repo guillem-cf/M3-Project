@@ -19,10 +19,13 @@ def generate_image_patches_db(in_directory, out_directory, patch_size=64):
     total = 2688
     count = 0
     for split_dir in os.listdir(in_directory):
+        if split_dir.endswith(".dat"):
+            continue
         if not os.path.exists(os.path.join(out_directory, split_dir)):
             os.makedirs(os.path.join(out_directory, split_dir))
-
         for class_dir in os.listdir(os.path.join(in_directory, split_dir)):
+            if class_dir.endswith(".dat"):
+                continue
             if not os.path.exists(os.path.join(out_directory, split_dir, class_dir)):
                 os.makedirs(os.path.join(out_directory, split_dir, class_dir))
 
