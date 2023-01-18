@@ -18,9 +18,9 @@ parser = argparse.ArgumentParser(description='MIT',
 parser.add_argument('--DATASET_DIR', type=str, help='Dataset path', default='/home/mcv/datasets/MIT_split')
 parser.add_argument('--PATCHES_DIR', type=str, help='Patches path', default='/home/group10/m3/data/MIT_split_patches')
 parser.add_argument('--MODEL_FNAME', type=str, default='/home/group10/m3/patch_based_mlp.h5', help='Model path')
-parser.add_argument('--PATCH_SIZE', type=bool, default=False, help='Indicate Patch Size', default=64)
-parser.add_argument("--BATCH_SIZE", help="Indicate Batch Size", default=16)
-parser.add_argument("--IMG_SIZE", help="Indicate Image Size", default=32)
+parser.add_argument('--PATCH_SIZE', type=int, help='Indicate Patch Size', default=64)
+parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
+parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
 args = parser.parse_args()
 
 # user defined variables
