@@ -1,24 +1,28 @@
 import argparse
 
 import matplotlib
+import tensorflow as tf
 from keras import Model, Sequential
 from keras.layers import Dense, Reshape
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import plot_model
 from utils import *
+import wandb
+from wandb.keras import WandbCallback
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-parser = argparse.ArgumentParser(
-    description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-)
-
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+    
+parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
-parser.add_argument("--MODEL_FNAME", type=str, default="./patch_based_mlp.h5", help="Model path")
+parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp.h5", help="Model path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
@@ -31,6 +35,8 @@ BATCH_SIZE = 16
 DATASET_DIR = '/home/mcv/datasets/MIT_split'
 MODEL_FNAME = '/home/group10/m3/my_first_mlp.h5'
 """
+
+wandb.init(project="M3",config={"hyper": "parameter"})
 
 PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
 
@@ -55,7 +61,7 @@ model.add(Dense(units=8, activation="softmax"))
 model.compile(loss="categorical_crossentropy", optimizer="sgd", metrics=["accuracy"])
 
 print(model.summary())
-plot_model(model, to_file="modelMLP.png", show_shapes=True, show_layer_names=True)
+plot_model(model, to_file="images/modelMLP.png", show_shapes=True, show_layer_names=True)
 
 print("Done!\n")
 
@@ -120,6 +126,7 @@ history = model.fit(
     validation_data=validation_generator,
     validation_steps=807 // args.BATCH_SIZE,
     verbose=0,
+    callbacks=[WandbCallback()]
 )
 
 print("Done!\n")
@@ -135,7 +142,7 @@ plt.title("model accuracy")
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend(["train", "validation"], loc="upper left")
-plt.savefig("accuracy.jpg")
+plt.savefig("images/accuracy.jpg")
 plt.close()
 # summarize history for loss
 plt.plot(history.history["loss"])
@@ -144,7 +151,7 @@ plt.title("model loss")
 plt.ylabel("loss")
 plt.xlabel("epoch")
 plt.legend(["train", "validation"], loc="upper left")
-plt.savefig("loss.jpg")
+plt.savefig("images/loss.jpg")
 
 # to get the output of a given layer
 # crop the model up to a certain layer
@@ -158,3 +165,5 @@ print("prediction for image " + os.path.join(directory, os.listdir(directory)[0]
 features = model_layer.predict(x / 255.0)
 print(features)
 print("Done!")
+
+wandb.finish()

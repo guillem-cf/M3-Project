@@ -1,34 +1,21 @@
 from __future__ import print_function
 
 import argparse
-
+import tensorflow as tf
 from keras.layers import Dense, Reshape
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from utils import *
+import wandb
+from wandb.keras import WandbCallback
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 
-parser = argparse.ArgumentParser(
-    description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-)
-
-parser.add_argument(
-    "--DATASET_DIR",
-    type=str,
-    help="Dataset path",
-    default="./MIT_split",
-)
-parser.add_argument(
-    "--PATCHES_DIR",
-    type=str,
-    help="Patches path",
-    default="./MIT_split_patches",
-)
-parser.add_argument(
-    "--MODEL_FNAME",
-    type=str,
-    default="./patch_based_mlp.h5",
-    help="Model path",
-)
+parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
+parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
+parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp.h5", help="Model path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
 args = parser.parse_args()
@@ -41,6 +28,8 @@ DATASET_DIR = '/home/mcv/datasets/MIT_split'
 PATCHES_DIR = '/home/group10/m3/data/MIT_split_patches' + str(PATCH_SIZE)
 MODEL_FNAME = '/home/group10/m3/patch_based_mlp.h5'
 """
+
+wandb.init(project="M3_patches",config={"hyper": "parameter"})
 PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
 
 
@@ -136,13 +125,12 @@ if not os.path.exists(args.MODEL_FNAME) or train:
         epochs=150,
         validation_data=validation_generator,
         validation_steps=8070 // args.BATCH_SIZE,
+        callbacks=[WandbCallback()]
     )
 
     print("Done!\n")
     print("Saving the model into " + args.MODEL_FNAME + " \n")
-    model.save_weights(
-        args.MODEL_FNAME
-    )  # always save your weights after training or during training
+    model.save_weights(args.MODEL_FNAME)  # always save your weights after training or during training
     print("Done!\n")
 
 print("Building MLP model for testing...\n")
@@ -192,3 +180,4 @@ for class_dir in os.listdir(directory):
 
 print("Done!\n")
 print("Test Acc. = " + str(correct / total) + "\n")
+wandb.finish()

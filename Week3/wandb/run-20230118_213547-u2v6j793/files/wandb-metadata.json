@@ -1,0 +1,205 @@
+{
+    "os": "Linux-6.1.7-060107-generic-x86_64-with-glibc2.35",
+    "python": "3.10.9",
+    "heartbeatAt": "2023-01-18T20:35:48.299600",
+    "startedAt": "2023-01-18T20:35:47.701193",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/johnny/Projects/M3_Project/Week3/mlp_MIT_8_scene.py",
+    "codePath": "Week3/mlp_MIT_8_scene.py",
+    "git": {
+        "remote": "https://github.com/johnnynunez/M3_Project.git",
+        "commit": "cb43fc8ec65d5bcc566450ccac877c8f8459bd5c"
+    },
+    "email": "johnnynuca14@gmail.com",
+    "root": "/home/johnny/Projects/M3_Project",
+    "host": "johnny-Ubuntu",
+    "username": "johnny",
+    "executable": "/home/johnny/miniconda3/envs/m3/bin/python",
+    "cpu_count": 16,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 3235.9129687500003,
+        "min": 3000.0,
+        "max": 4500.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3163.498,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 4769.316,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 4500.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 4648.777,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 5498.893,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2760.15,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 4500.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2756.06,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2758.031,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2843.118,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2807.442,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 5217.663,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3136.091,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3426.148,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2745.081,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3384.61,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 4328.28,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2826.454,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2776.363,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 3000.0,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2786.83,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2740.496,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2757.743,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2783.585,
+            "min": 3000.0,
+            "max": 4500.0
+        },
+        {
+            "current": 2823.562,
+            "min": 3000.0,
+            "max": 4500.0
+        }
+    ],
+    "disk": {
+        "total": 915.3232879638672,
+        "used": 42.455810546875
+    },
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3090",
+            "memory_total": 25769803776
+        }
+    ],
+    "memory": {
+        "total": 30.485469818115234
+    }
+}
