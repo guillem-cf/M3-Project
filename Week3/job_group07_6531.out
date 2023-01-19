@@ -1,0 +1,29 @@
+Building MLP model...
+
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ first (Reshape)             (None, 3072)              0         
+                                                                 
+ second (Dense)              (None, 2048)              6293504   
+                                                                 
+ dense (Dense)               (None, 8)                 16392     
+                                                                 
+=================================================================
+Total params: 6,309,896
+Trainable params: 6,309,896
+Non-trainable params: 0
+_________________________________________________________________
+None
+You must install pydot (`pip install pydot`) and install graphviz (see instructions at https://graphviz.gitlab.io/download/) for plot_model to work.
+Done!
+
+Start training...
+
+Found 1881 images belonging to 8 classes.
+Found 807 images belonging to 8 classes.
+Done!
+
+Saving the model into ./model/patch_based_mlp.h5 
+
