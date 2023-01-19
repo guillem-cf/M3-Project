@@ -3,10 +3,10 @@ import argparse
 import matplotlib
 import tensorflow as tf
 import wandb
-from keras import Model, Sequential
-from keras.layers import Dense, Reshape
-from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import plot_model
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Flatten, Dense, Reshape
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import plot_model
 from wandb.keras import WandbCallback
 
 from utils import *
@@ -70,14 +70,16 @@ if not os.path.exists(args.DATASET_DIR):
 print("Building MLP model...\n")
 
 # Build the Multi Layer Perceptron model
+IMG_SIZE = 32
 model = Sequential()
-model.add(Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=[args.IMG_SIZE, args.IMG_SIZE, 3], name="first"))
+model.add(
+    Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(IMG_SIZE, IMG_SIZE, 3), name='first', dtype='float32'))
 model.add(Dense(units=2048, activation="relu", name="second"))
 model.add(Dense(units=8, activation="softmax"))
 model.compile(loss=args.LOSS, optimizer=args.OPTIMIZER, metrics=["accuracy"])
 
 print(model.summary())
-plot_model(model, to_file="images/modelMLP_"+args.experiment_name+".png", show_shapes=True, show_layer_names=True)
+plot_model(model, to_file="images/modelMLP_" + args.experiment_name + ".png", show_shapes=True, show_layer_names=True)
 
 print("Done!\n")
 

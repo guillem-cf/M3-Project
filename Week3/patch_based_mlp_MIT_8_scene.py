@@ -2,9 +2,9 @@ from __future__ import print_function
 
 import argparse
 import tensorflow as tf
-from keras.layers import Dense, Reshape
-from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Flatten, Dense, Reshape
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from utils import *
 import wandb
 from wandb.keras import WandbCallback
@@ -61,7 +61,7 @@ PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
 
 def build_mlp(input_size=args.PATCH_SIZE, phase="TRAIN"):
     model = Sequential()
-    model.add(Reshape((input_size * input_size * 3,), input_shape=(input_size, input_size, 3)))
+    model.add(Reshape((input_size * input_size * 3,), input_shape=(input_size, input_size, 3)), dtype='float32')
     model.add(Dense(units=2048, activation="relu"))
     # model.add(Dense(units=1024, activation='relu'))
     if phase == "TEST":
