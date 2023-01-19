@@ -61,7 +61,7 @@ PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
 
 def build_mlp(input_size=args.PATCH_SIZE, phase="TRAIN"):
     model = Sequential()
-    model.add(Reshape((input_size * input_size * 3,), input_shape=(input_size, input_size, 3)), dtype='float32')
+    model.add(Reshape((-1), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3)))
     model.add(Dense(units=2048, activation="relu"))
     # model.add(Dense(units=1024, activation='relu'))
     if phase == "TEST":

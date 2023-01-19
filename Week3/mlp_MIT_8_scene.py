@@ -70,10 +70,10 @@ if not os.path.exists(args.DATASET_DIR):
 print("Building MLP model...\n")
 
 # Build the Multi Layer Perceptron model
-IMG_SIZE = 32
 model = Sequential()
 model.add(
-    Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(IMG_SIZE, IMG_SIZE, 3), name='first', dtype='float32'))
+    Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+            dtype='float32'))
 model.add(Dense(units=2048, activation="relu", name="second"))
 model.add(Dense(units=8, activation="softmax"))
 model.compile(loss=args.LOSS, optimizer=args.OPTIMIZER, metrics=["accuracy"])
