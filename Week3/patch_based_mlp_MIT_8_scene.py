@@ -2,12 +2,14 @@ from __future__ import print_function
 
 import argparse
 import tensorflow as tf
-from keras.layers import Dense, Reshape
-from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Flatten, Dense, Reshape
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from utils import *
 import wandb
 from wandb.keras import WandbCallback
+
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
@@ -27,7 +29,7 @@ parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", 
 parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="adam")
 parser.add_argument("--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy")
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
-parser.add_argument("--experiment_name", type=str, help="Experiment name", default="MIT")
+parser.add_argument("--experiment_name", type=str, help="Experiment name", default="Patches")
 args = parser.parse_args()
 
 # user defined variables
@@ -59,7 +61,7 @@ PATCHES_DIR = args.PATCHES_DIR + str(args.PATCH_SIZE)
 
 def build_mlp(input_size=args.PATCH_SIZE, phase="TRAIN"):
     model = Sequential()
-    model.add(Reshape((input_size * input_size * 3,), input_shape=(input_size, input_size, 3)))
+    model.add(Reshape((-1), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3)))
     model.add(Dense(units=2048, activation="relu"))
     # model.add(Dense(units=1024, activation='relu'))
     if phase == "TEST":
@@ -154,7 +156,8 @@ if not os.path.exists(args.MODEL_FNAME) or train:
 
     print("Done!\n")
     print("Saving the model into " + args.MODEL_FNAME + " \n")
-    model.save_weights(args.MODEL_FNAME)  # always save your weights after training or during training
+    model.save_weights(
+        args.MODEL_FNAME + "_" + args.experiment_name + ".h5")  # always save your weights after training or during training
     print("Done!\n")
 
 print("Building MLP model for testing...\n")

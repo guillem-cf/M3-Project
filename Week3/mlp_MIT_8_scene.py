@@ -3,10 +3,10 @@ import argparse
 import matplotlib
 import tensorflow as tf
 import wandb
-from keras import Model, Sequential
-from keras.layers import Dense, Reshape
-from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import plot_model
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Flatten, Dense, Reshape
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import plot_model
 from wandb.keras import WandbCallback
 
 from utils import *
@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
@@ -23,7 +24,7 @@ for gpu in gpus:
 parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
-parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp.h5", help="Model path")
+parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp", help="Model path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
 parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=100)
@@ -70,13 +71,15 @@ print("Building MLP model...\n")
 
 # Build the Multi Layer Perceptron model
 model = Sequential()
-model.add(Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name="first"))
+model.add(
+    Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+            dtype='float32'))
 model.add(Dense(units=2048, activation="relu", name="second"))
 model.add(Dense(units=8, activation="softmax"))
 model.compile(loss=args.LOSS, optimizer=args.OPTIMIZER, metrics=["accuracy"])
 
 print(model.summary())
-plot_model(model, to_file="images/modelMLP.png", show_shapes=True, show_layer_names=True)
+plot_model(model, to_file="images/modelMLP_" + args.experiment_name + ".png", show_shapes=True, show_layer_names=True)
 
 print("Done!\n")
 
@@ -147,7 +150,8 @@ history = model.fit(
 print("Done!\n")
 
 print("Saving the model into " + args.MODEL_FNAME + " \n")
-model.save_weights(args.MODEL_FNAME)  # always save your weights after training or during training
+model.save_weights(
+    args.MODEL_FNAME + "_" + args.experiment_name + ".h5")  # always save your weights after training or during training
 print("Done!\n")
 
 # summarize history for accuracy
@@ -157,7 +161,7 @@ plt.title("model accuracy")
 plt.ylabel("accuracy")
 plt.xlabel("epoch")
 plt.legend(["train", "validation"], loc="upper left")
-plt.savefig("images/accuracy.jpg")
+plt.savefig("images/accuracy_" + args.experiment_name + ".jpg")
 plt.close()
 # summarize history for loss
 plt.plot(history.history["loss"])
@@ -166,7 +170,7 @@ plt.title("model loss")
 plt.ylabel("loss")
 plt.xlabel("epoch")
 plt.legend(["train", "validation"], loc="upper left")
-plt.savefig("images/loss.jpg")
+plt.savefig("images/loss_" + args.experiment_name + ".jpg")
 
 # to get the output of a given layer
 # crop the model up to a certain layer
