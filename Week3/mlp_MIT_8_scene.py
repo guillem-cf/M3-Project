@@ -30,9 +30,9 @@ parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", defaul
 parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=100)
 parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.001)
 parser.add_argument("--MOMENTUM", type=float, help="Indicate Momentum", default=0.9)
-parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.5)
+parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0)
 parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.0001)
-parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="adam")
+parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="sgd")
 parser.add_argument("--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy")
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
 parser.add_argument("--experiment_name", type=str, help="Experiment name", default="baseline")
@@ -47,12 +47,18 @@ MODEL_FNAME = '/home/group10/m3/my_first_mlp.h5'
 """
 
 config = dict(
+    model_name = args.experiment_name,
     learning_rate=args.LEARNING_RATE,
     momentum=args.MOMENTUM,
-    architecture="CNN",
+    architecture="MLP",
     dataset="MIT",
     optimizer=args.OPTIMIZER,
     loss=args.LOSS,
+    image_size = args.IMG_SIZE,
+    batch_size = args.BATCH_SIZE,
+    epochs = args.EPOCHS,
+    weight_decay = args.WEIGHT_DECAY,
+    dropout = args.DROPOUT,
 )
 
 wandb.init(
@@ -143,7 +149,7 @@ history = model.fit(
     epochs=50,
     validation_data=validation_generator,
     validation_steps=807 // args.BATCH_SIZE,
-    verbose=0,
+    verbose=1,
     callbacks=[WandbCallback()]
 )
 

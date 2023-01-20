@@ -1,5 +1,0 @@
-2023-01-19 17:12:40.600515: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.1
-Traceback (most recent call last):
-  File "/export/home/group07/M3_Project/Week3/mlp_MIT_8_scene.py", line 10, in <module>
-    from wandb.keras import WandbCallback
-ModuleNotFoundError: No module named 'wandb.keras'

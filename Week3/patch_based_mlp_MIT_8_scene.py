@@ -15,21 +15,21 @@ gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
-parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = argparse.ArgumentParser(description="MIT Patches", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
-parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp.h5", help="Model path")
+parser.add_argument("--MODEL_FNAME", type=str, default="./model/patch_based_mlp", help="Model path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
 parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=100)
 parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.001)
 parser.add_argument("--MOMENTUM", type=float, help="Indicate Momentum", default=0.9)
-parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.5)
+parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0)
 parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.0001)
-parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="adam")
+parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="sgd")
 parser.add_argument("--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy")
 parser.add_argument("--IMG_SIZE", type=int, help="Indicate Image Size", default=32)
-parser.add_argument("--experiment_name", type=str, help="Experiment name", default="Patches")
+parser.add_argument("--experiment_name", type=str, help="Experiment name", default="baseline")
 args = parser.parse_args()
 
 # user defined variables
@@ -42,12 +42,18 @@ MODEL_FNAME = '/home/group10/m3/patch_based_mlp.h5'
 """
 
 config = dict(
+    model_name = args.experiment_name,
     learning_rate=args.LEARNING_RATE,
     momentum=args.MOMENTUM,
-    architecture="CNN",
-    dataset="MIT",
+    architecture="MLP",
+    dataset="MIT Patches",
     optimizer=args.OPTIMIZER,
     loss=args.LOSS,
+    image_size = args.IMG_SIZE,
+    batch_size = args.BATCH_SIZE,
+    epochs = args.EPOCHS,
+    weight_decay = args.WEIGHT_DECAY,
+    dropout = args.DROPOUT,
 )
 
 wandb.init(
