@@ -1,3 +1,24 @@
+./Week3/MIT_split_patches/
+./Week3/MIT_split_patches8/
+./Week3/MIT_split_patches16/
+./Week3/MIT_split_patches32/
+./Week3/MIT_split_patches64/
+./Week3/model/
+./Week3/weights/
+./Week3/images/
+./Week3/weights/check.ipynb
+wandb/
+./Week3/wandb
+/Week3/wandb
+*.h5
+*.err
+*.out
+
+
+*.err 
+*.out
+*.jpg
+*.png
 *.pkl
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -185,4 +206,3 @@ fabric.properties
 
 # MACOS
 .DS_Store
-wandb/
