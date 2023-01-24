@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow as tensorflow
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
 from tensorflow.keras.preprocessing import image
@@ -9,9 +9,9 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.applications.densenet import preprocess_input
 import matplotlib
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-
 import wandb
 from wandb.keras import WandbCallback
 
@@ -19,33 +19,10 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import argparse
 
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-gpus = tf.config.experimental.list_physical_devices('GPU')
+print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices('GPU')))
+gpus = tensorflow.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
-
-
-def preprocess_input(x, dim_ordering='default'):
-    if dim_ordering == 'default':
-        dim_ordering = K.image_data_format()
-    assert dim_ordering in {'channels_first', 'channels_last'}
-
-    if dim_ordering == 'channels_first':
-        # 'RGB'->'BGR'
-        x = x[::-1, :, :]
-        # Zero-center by mean pixel
-        x[0, :, :] -= 103.939
-        x[1, :, :] -= 116.779
-        x[2, :, :] -= 123.68
-    else:
-        # 'RGB'->'BGR'
-        x = x[:, :, ::-1]
-        # Zero-center by mean pixel
-        x[:, :, 0] -= 103.939
-        x[:, :, 1] -= 116.779
-        x[:, :, 2] -= 123.68
-    return x
-
+    tensorflow.config.experimental.set_memory_growth(gpu, True)
 
 def train(args):
     datagen = ImageDataGenerator(featurewise_center=False,
@@ -112,7 +89,7 @@ def train(args):
                         validation_steps=(int(args.VALIDATION_SAMPLES // args.BATCH_SIZE) + 1),
                         callbacks=[WandbCallback()])
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
-    # https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/ReduceLROnPlateau
+    # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
     # https://keras.io/api/callbacks/model_checkpoint/
 
     result = model.evaluate(test_generator)
