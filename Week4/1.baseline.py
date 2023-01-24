@@ -155,7 +155,7 @@ if __name__ == "__main__":
     """
 
     parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_small_train_1")
+    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="/ghome/group07/mcv/datasets/MIT_split")
     parser.add_argument("--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path")
     parser.add_argument("--WEIGHTS_FNAME", type=str, default="./weights/full_image/mlp", help="Weights path")
     # parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
