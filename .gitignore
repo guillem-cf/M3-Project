@@ -10,6 +10,10 @@
 wandb/
 ./Week3/wandb
 /Week3/wandb
+./MIT_small_train1
+./MIT_small_train2
+./MIT_small_train3
+./MIT_small_train4
 *.h5
 *.err
 *.out
@@ -17,7 +21,7 @@ wandb/
 
 *.err 
 *.out
-# *.jpg
+*.jpg
 # *.png
 *.pkl
 # Byte-compiled / optimized / DLL files
