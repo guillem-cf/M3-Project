@@ -25,7 +25,22 @@ for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
 def train(args):
-    datagen = ImageDataGenerator(rescale=1.0 / 255, horizontal_flip=True)
+    datagen = ImageDataGenerator(featurewise_center=False,
+                                 samplewise_center=False,
+                                 featurewise_std_normalization=False,
+                                 samplewise_std_normalization=False,
+                                 preprocessing_function=preprocess_input,
+                                 rotation_range=0.,
+                                 width_shift_range=0.,
+                                 height_shift_range=0.,
+                                 shear_range=0.,
+                                 zoom_range=0.,
+                                 channel_shift_range=0.,
+                                 fill_mode='nearest',
+                                 cval=0.,
+                                 horizontal_flip=False,
+                                 vertical_flip=False,
+                                 rescale=None)
 
     train_generator = datagen.flow_from_directory(args.DATASET_DIR + '/train',
                                                   target_size=(args.IMG_WIDTH, args.IMG_HEIGHT),
