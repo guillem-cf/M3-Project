@@ -43,16 +43,22 @@ def train(args):
                                                        class_mode='categorical')
 
     base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(224, 224, 3))
-    base_model.trainable = False
+    #base_model.trainable = False
     # base_model.summary()
     # plot_model(base_model, to_file='modelDenseNet121.png', show_shapes=True, show_layer_names=True)
 
-    x = Flatten()(base_model.output)
-    x = Dense(512, activation='relu')(x)
-    x = Dense(256, activation='relu')(x)
+    for layer in base_model.layers: # freeze all layers except the last 2  
+        layer.trainable = False
+    
+    
+    x = Flatten()(base_model.layers[-1].output)
+    #x = Dense(512, activation='relu')(x)
+    #x = Dense(256, activation='relu')(x)
     output = Dense(8, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=output)
+    for layer in model.layers:
+        print(layer.name, layer.trainable)
     model.summary()
     plot_model(model, to_file='modelDenseNet121c.png', show_shapes=True, show_layer_names=True)
 
@@ -117,7 +123,7 @@ if __name__ == "__main__":
     """
 
     parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
+    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="/ghome/mcv/datasets/MIT_split")
     parser.add_argument("--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path")
     parser.add_argument("--WEIGHTS_FNAME", type=str, default="./weights/full_image/mlp", help="Weights path")
     # parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
