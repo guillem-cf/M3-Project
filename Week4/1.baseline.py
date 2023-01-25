@@ -49,7 +49,7 @@ def train(args):
     base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     #base_model.trainable = False
     base_model.summary()
-    plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
+    #plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
 
     base_model.trainable = False
     
@@ -61,20 +61,24 @@ def train(args):
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
     x = base_model.output
-    #Model 1
-    #x = Flatten()(base_model.output)
 
-    # Model 2
-    # Add a global spatial average pooling layer
-    x = GlobalAveragePooling2D()(x)
-    # Model 3 --> model 2 + 2 dense layers
+    if(args.MODEL_START == 1):
+        x = Flatten()(base_model.output)
+
+    if(args.MODEL_START == 2):
+        x = GlobalAveragePooling2D()(x)
+
+    for layer in args.MODEL_HID:
+        x = Dense(layer, activation='relu')(x)
+    
+
     output = Dense(8, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=output)
     for layer in model.layers:
         print(layer.name, layer.trainable)
     model.summary()
-    plot_model(model, to_file='./images/modelDenseNet121c.png',
+    plot_model(model, to_file='./images/modelDenseNet121_'+ args.experiment_name+'.png',
                show_shapes=True, show_layer_names=True)
 
     # defining the early stop criteria
@@ -150,7 +154,7 @@ if __name__ == "__main__":
     parser.add_argument("--BATCH_SIZE", type=int,
                         help="Indicate Batch Size", default=32)
     parser.add_argument("--EPOCHS", type=int,
-                        help="Indicate Epochs", default=20)
+                        help="Indicate Epochs", default=50)
     parser.add_argument("--LEARNING_RATE", type=float,
                         help="Indicate Learning Rate", default=0.001)
     parser.add_argument("--MOMENTUM", type=float,
@@ -172,6 +176,10 @@ if __name__ == "__main__":
                         help="Experiment name", default="baseline")
     parser.add_argument("--VALIDATION_SAMPLES", type=int,
                         help="Number of validation samples", default=807)
+    parser.add_argument("--MODEL_START", type=int,
+                        help="1: flatten, 2:GAP", default=1)
+    parser.add_argument("--MODEL_HID", type=list, help="Indicate the model to use", default=[512, 256])
+    
     args = parser.parse_args()
 
     config = dict(

@@ -9,4 +9,17 @@
 eval "$(conda shell.bash hook)"
 conda activate m3
 #python w4code_example_backup_profe.py
-CUDA_VISIBLE_DEVICES=4 python 1.baseline.py --experiment_name model3
+python 1.baseline.py --experiment_name model_13 --MODEL_START 1 --MODEL_HID 1024,512
+python 1.baseline.py --experiment_name model_11 --MODEL_START 1 --MODEL_HID 1024
+python 1.baseline.py --experiment_name model_12 --MODEL_START 1 --MODEL_HID 512
+python 1.baseline.py --experiment_name model_22 --MODEL_START 2 --MODEL_HID 512
+
+python 1.baseline.py --experiment_name model_23 --MODEL_START 2 --MODEL_HID 1024,512
+python 1.baseline.py --experiment_name model_14 --MODEL_START 1 --MODEL_HID 512,256
+python 1.baseline.py --experiment_name model_24 --MODEL_START 2 --MODEL_HID 512,255
+python 1.baseline.py --experiment_name model_15 --MODEL_START 1 --MODEL_HID 1024,512,256
+python 1.baseline.py --experiment_name model_25 --MODEL_START 2 --MODEL_HID 1024,512,256
+
+
+
+
