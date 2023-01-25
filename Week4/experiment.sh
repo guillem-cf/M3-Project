@@ -9,4 +9,5 @@
 eval "$(conda shell.bash hook)"
 conda activate m3
 #python w4code_example_backup_profe.py
-python 1.baseline.py --DATASET_DIR ./MIT_split --experiment_name model3
+python 1.baseline.py --experiment_name baseline_1 --MODEL_START 1
+python 1.baseline.py --experiment_name baseline_2 --MODEL_START 2

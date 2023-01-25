@@ -178,7 +178,7 @@ if __name__ == "__main__":
                         help="Number of validation samples", default=807)
     parser.add_argument("--MODEL_START", type=int,
                         help="1: flatten, 2:GAP", default=1)
-    parser.add_argument("--MODEL_HID", type=list, help="Indicate the model to use", default=[512, 256])
+    parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=[512, 256])
     
     args = parser.parse_args()
 
