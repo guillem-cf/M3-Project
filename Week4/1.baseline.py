@@ -51,10 +51,16 @@ def train(args):
     #base_model.trainable = False
     # base_model.summary()
     # plot_model(base_model, to_file='modelDenseNet121.png', show_shapes=True, show_layer_names=True)
+    
+    # OPTION 1
 
-    for layer in base_model.layers:  # freeze all layers except the last 2
+    for layer in base_model.layers:  # freeze all layers base model
         layer.trainable = False
 
+    # OPTION 2
+    # for layer in base_model.layers[:-10]:
+    # layer.trainable = False
+    
     # OPTION 1
     """ 
     Global Average Pooling (GAP) is used as a way to reduce the spatial dimensions of the feature maps, 
@@ -62,16 +68,13 @@ def train(args):
     It works by taking the average of all the values in each feature map, resulting in a single value for each feature map. 
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
-    # x = Flatten()(base_model.output)
-    # x = Dense(512, activation='relu')(x)
-    # x = Dense(256, activation='relu')(x)
-    # output = Dense(8, activation='softmax', name='predictions')(x)
-
-    # OPTION 1
-    # Add a global spatial average pooling layer
     x = base_model.output
+    # x = Flatten()(base_model.output)
+    # OPTION 2
+    # Add a global spatial average pooling layer
     x = GlobalAveragePooling2D()(x)
-    x = Dense(1024, activation='relu')(x)
+    x = Dense(512, activation='relu')(x)
+    x = Dense(256, activation='relu')(x)
     output = Dense(8, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=output)
