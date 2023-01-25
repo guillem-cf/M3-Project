@@ -11,3 +11,7 @@ conda activate m3
 #python w4code_example_backup_profe.py
 python 1.baseline.py --experiment_name baseline_1 --MODEL_START 1
 python 1.baseline.py --experiment_name baseline_2 --MODEL_START 2
+python 1.baseline.py --experiment_name model_11 --MODEL_START 1 --MODEL_HID 1024
+python 1.baseline.py --experiment_name model_12 --MODEL_START 2 --MODEL_HID 1024
+python 1.baseline.py --experiment_name model_21 --MODEL_START 1 --MODEL_HID 512
+python 1.baseline.py --experiment_name model_22 --MODEL_START 2 --MODEL_HID 512
