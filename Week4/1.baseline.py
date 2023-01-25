@@ -46,20 +46,12 @@ def train(args):
                                                        batch_size=args.BATCH_SIZE,
                                                        class_mode='categorical')
 
-    base_model = DenseNet121(
-        include_top=False, weights='imagenet', input_shape=(224, 224, 3))
+    base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     #base_model.trainable = False
-    # base_model.summary()
-    # plot_model(base_model, to_file='modelDenseNet121.png', show_shapes=True, show_layer_names=True)
-    
-    # OPTION 1
+    base_model.summary()
+    plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
 
-    for layer in base_model.layers:  # freeze all layers base model
-        layer.trainable = False
-
-    # OPTION 2
-    # for layer in base_model.layers[:-10]:
-    # layer.trainable = False
+    base_model.trainable = False
     
     # OPTION 1
     """ 
@@ -69,10 +61,14 @@ def train(args):
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
     x = base_model.output
-    # x = Flatten()(base_model.output)
-    # OPTION 2
+    #Model 1
+    #x = Flatten()(base_model.output)
+
+    # Model 2
     # Add a global spatial average pooling layer
     x = GlobalAveragePooling2D()(x)
+
+    # Model 3 --> model 2 + 2 dense layers
     x = Dense(512, activation='relu')(x)
     x = Dense(256, activation='relu')(x)
     output = Dense(8, activation='softmax', name='predictions')(x)
@@ -81,7 +77,7 @@ def train(args):
     for layer in model.layers:
         print(layer.name, layer.trainable)
     model.summary()
-    plot_model(model, to_file='modelDenseNet121c.png',
+    plot_model(model, to_file='./images/modelDenseNet121c.png',
                show_shapes=True, show_layer_names=True)
 
     # defining the early stop criteria
