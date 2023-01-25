@@ -68,8 +68,9 @@ def train(args):
     if(args.MODEL_START == 2):
         x = GlobalAveragePooling2D()(x)
 
-    for layer in args.MODEL_HID:
-        x = Dense(layer, activation='relu')(x)
+    if args.MODEL_HID is not None:
+        for layer in args.MODEL_HID:
+            x = Dense(layer, activation='relu')(x)
     
 
     output = Dense(8, activation='softmax', name='predictions')(x)
@@ -178,7 +179,7 @@ if __name__ == "__main__":
                         help="Number of validation samples", default=807)
     parser.add_argument("--MODEL_START", type=int,
                         help="1: flatten, 2:GAP", default=1)
-    parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=[512, 256])
+    parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=None)
     
     args = parser.parse_args()
 
