@@ -26,7 +26,7 @@ for gpu in gpus:
 
 
 def train(args):
-    datagen = ImageDataGenerator(rescale=1.0 / 255, horizontal_flip=True)
+    datagen = ImageDataGenerator(rescale=None, horizontal_flip=True, preprocessing_function=preprocess_input)
 
     train_generator = datagen.flow_from_directory(args.DATASET_DIR + '/train',
                                                   target_size=(
@@ -67,10 +67,7 @@ def train(args):
     # Model 2
     # Add a global spatial average pooling layer
     x = GlobalAveragePooling2D()(x)
-
     # Model 3 --> model 2 + 2 dense layers
-    x = Dense(512, activation='relu')(x)
-    x = Dense(256, activation='relu')(x)
     output = Dense(8, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=base_model.input, outputs=output)
@@ -90,8 +87,6 @@ def train(args):
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adadelta', metrics=['accuracy'])
-
-    # preprocessing_function=preprocess_input,
 
     history = model.fit(train_generator,
                         steps_per_epoch=(int(400 // args.BATCH_SIZE) + 1),
