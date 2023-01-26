@@ -57,8 +57,11 @@ def train(args):
     It works by taking the average of all the values in each feature map, resulting in a single value for each feature map. 
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
-    #  x = base_model.output
-    x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
+
+    if (args.REMOVE_BLOCK == 1):
+        x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
+    else:
+        x = base_model.output
 
     if (args.MODEL_START == 1):
         x = Flatten()(x)
@@ -177,6 +180,7 @@ if __name__ == "__main__":
     parser.add_argument("--MODEL_START", type=int,
                         help="1: flatten, 2:GAP", default=1)
     parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=None)
+    parser.add_argument("--REMOVE_BLOCK", type=int, help="Remove block", default=0)
 
     args = parser.parse_args()
 
