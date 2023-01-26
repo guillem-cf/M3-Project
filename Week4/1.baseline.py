@@ -60,14 +60,16 @@ def train(args):
 
     if (args.REMOVE_BLOCK == 1):
         x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
+
+    elif (args.REMOVE_BLOCK == 2):
+        x = base_model.get_layer('pool4_relu').output  
+    
     else:
         x = base_model.output
 
-    if (args.MODEL_START == 1):
-        x = Flatten()(x)
 
-    if (args.MODEL_START == 2):
-        x = GlobalAveragePooling2D()(x)
+
+    x = GlobalAveragePooling2D()(x)
 
     if args.MODEL_HID is not None:
         for layer in args.MODEL_HID:
@@ -179,8 +181,6 @@ if __name__ == "__main__":
                         help="Experiment name", default="baseline")
     parser.add_argument("--VALIDATION_SAMPLES", type=int,
                         help="Number of validation samples", default=807)
-    parser.add_argument("--MODEL_START", type=int,
-                        help="1: flatten, 2:GAP", default=1)
     parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=None)
     parser.add_argument("--REMOVE_BLOCK", type=int, help="Remove block", default=0)
 
