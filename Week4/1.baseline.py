@@ -47,12 +47,12 @@ def train(args):
                                                        class_mode='categorical')
 
     base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
-    #base_model.trainable = False
+    # base_model.trainable = False
     base_model.summary()
-    #plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
+    # plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
 
     base_model.trainable = False
-    
+
     # OPTION 1
     """ 
     Global Average Pooling (GAP) is used as a way to reduce the spatial dimensions of the feature maps, 
@@ -60,20 +60,18 @@ def train(args):
     It works by taking the average of all the values in each feature map, resulting in a single value for each feature map. 
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
-    # x = base_model.output
-    x = base_model.get_layer('pool4_conv').output # -1 block + -1 transient
-    
+    #  x = base_model.output
+    x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
 
-    if(args.MODEL_START == 1):
+    if (args.MODEL_START == 1):
         x = Flatten()(x)
 
-    if(args.MODEL_START == 2):
+    if (args.MODEL_START == 2):
         x = GlobalAveragePooling2D()(x)
 
     if args.MODEL_HID is not None:
         for layer in args.MODEL_HID:
             x = Dense(layer, activation='relu')(x)
-    
 
     output = Dense(8, activation='softmax', name='predictions')(x)
 
@@ -81,7 +79,7 @@ def train(args):
     for layer in model.layers:
         print(layer.name, layer.trainable)
     model.summary()
-    plot_model(model, to_file='./images/modelDenseNet121_'+ args.experiment_name+'.png',
+    plot_model(model, to_file='./images/modelDenseNet121_' + args.experiment_name + '.png',
                show_shapes=True, show_layer_names=True)
 
     # defining the early stop criteria
@@ -100,7 +98,7 @@ def train(args):
                         epochs=args.EPOCHS,
                         validation_data=validation_generator,
                         validation_steps=(
-                            int(args.VALIDATION_SAMPLES // args.BATCH_SIZE) + 1),
+                                int(args.VALIDATION_SAMPLES // args.BATCH_SIZE) + 1),
                         callbacks=[WandbCallback()])
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
@@ -182,7 +180,7 @@ if __name__ == "__main__":
     parser.add_argument("--MODEL_START", type=int,
                         help="1: flatten, 2:GAP", default=1)
     parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=None)
-    
+
     args = parser.parse_args()
 
     config = dict(
