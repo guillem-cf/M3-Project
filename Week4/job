@@ -32,20 +32,16 @@ conda activate m3
 #python 1.baseline.py --experiment_name model_51d --MODEL_START 1 --REMOVE_BLOCK 4 --MODEL_HID 1024
 
 #python 1.baseline.py --experiment_name baselineGAP_50 
-python 1.baseline.py --experiment_name cut1_conv --EPOCHS 50 --REMOVE_BLOCK 1
-python 1.baseline.py --experiment_name cut1_relu --EPOCHS 50 --REMOVE_BLOCK 2
-python 1.baseline.py --experiment_name cut2_conv --EPOCHS 50 --REMOVE_BLOCK 3
-python 1.baseline.py --experiment_name cut2_relu --EPOCHS 50 --REMOVE_BLOCK 4
-python 1.baseline.py --experiment_name cut3_conv --EPOCHS 50 --REMOVE_BLOCK 5
-python 1.baseline.py --experiment_name cut3_relu --EPOCHS 50 --REMOVE_BLOCK 6
 #python 1.2.all_model.py --experiment_name baselineProfeAll --MODEL_NAME best_baselineProfe_model_checkpoint.h5 --EPOCHS 50
 
-python 1.2.all_model.py --experiment_name cut1_conv_all --MODEL_NAME cut1_conv_model_checkpoint.h5 --EPOCHS 50
-python 1.2.all_model.py --experiment_name cut1_relu_all --MODEL_NAME cut1_relu_model_checkpoint.h5 --EPOCHS 50
-python 1.2.all_model.py --experiment_name cut2_conv_all --MODEL_NAME cut2_conv_model_checkpoint.h5 --EPOCHS 50
-python 1.2.all_model.py --experiment_name cut2_relu_all --MODEL_NAME cut2_relu_model_checkpoint.h5 --EPOCHS 50
-python 1.2.all_model.py --experiment_name cut3_conv_all --MODEL_NAME cut3_conv_model_checkpoint.h5 --EPOCHS 50
-python 1.2.all_model.py --experiment_name cut3_relu_all --MODEL_NAME cut3_relu_model_checkpoint.h5 --EPOCHS 50
+#python 1.baseline.py --experiment_name cut1_pool --EPOCHS 50 --REMOVE_BLOCK 1
+#python 1.baseline.py --experiment_name cut2_pool --EPOCHS 50 --REMOVE_BLOCK 2
+#python 1.baseline.py --experiment_name cut3_pool --EPOCHS 50 --REMOVE_BLOCK 3
+
+python 1.2.all_model.py --experiment_name cut1_pool_all --MODEL_NAME best_cut1_pool_model_checkpoint.h5 --EPOCHS 300
+python 1.2.all_model.py --experiment_name cut2_pool_all --MODEL_NAME best_cut2_pool_model_checkpoint.h5 --EPOCHS 300
+python 1.2.all_model.py --experiment_name cut3_pool_all --MODEL_NAME best_cut3_pool_model_checkpoint.h5 --EPOCHS 300
+python 1.2.all_model.py --experiment_name baselineProfeAll_300 --MODEL_NAME best_baselineProfe_model_checkpoint.h5 --EPOCHS 300
 
 
 

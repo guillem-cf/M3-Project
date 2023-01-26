@@ -45,7 +45,6 @@ def train(args):
 
     #base_model = DenseNet121(include_top=True, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
-    # base_model.trainable = False
     base_model.summary()
     # plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
 
@@ -60,37 +59,29 @@ def train(args):
     """
 
     if (args.REMOVE_BLOCK == 1): #trainable a false
+        #x = base_model.get_layer('pool4_pool').output  # -1 block + -1 transient
         x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
+    if (args.REMOVE_BLOCK == 2): #trainable a false
+        x = base_model.get_layer('pool3_pool').output  # -2 block + -2 transient
 
-    elif (args.REMOVE_BLOCK == 2):
-        x = base_model.get_layer('pool4_relu').output
+    if (args.REMOVE_BLOCK == 3): #trainable a false
+        x = base_model.get_layer('pool2_pool').output  # -3 block + -3 transient
 
-    elif (args.REMOVE_BLOCK == 3):
-        x = base_model.get_layer('pool3_conv').output  
-
-    elif (args.REMOVE_BLOCK == 4):
-        x = base_model.get_layer('pool3_relu').output  
-    
-    elif (args.REMOVE_BLOCK == 5):
-        x = base_model.get_layer('pool2_relu').output  
-
-    elif (args.REMOVE_BLOCK == 6):
-        x = base_model.get_layer('pool2_relu').output  
     
     #else: # posar trainable a true llavors
        # x = base_model.layers[-2].output
 
     #base_model.get_layer('avg_pool').trainable = True
 
-    #x = GlobalAveragePooling2D()(x)
-
-    if args.MODEL_HID is not None:
+    """if args.MODEL_HID is not None:
         for layer in args.MODEL_HID:
-            x = Dense(layer, activation='relu')(x)
+            x = Dense(layer, activation='relu')(x)"""
 
-    output = Dense(8, activation='softmax', name='predictionsProf')(x)
+    x = GlobalAveragePooling2D()(x)
+    x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
-    model = Model(inputs=base_model.input, outputs=output)
+    #model = Model(inputs=base_model.input, outputs=output)
+    model = Model(inputs=base_model.input, outputs=x)
     for layer in model.layers:
         print(layer.name, layer.trainable)
     model.summary()
