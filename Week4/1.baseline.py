@@ -60,10 +60,12 @@ def train(args):
     It works by taking the average of all the values in each feature map, resulting in a single value for each feature map. 
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
-    x = base_model.output
+    # x = base_model.output
+    x = base_model.get_layer('pool4_conv').output # -1 block + -1 transient
+    
 
     if(args.MODEL_START == 1):
-        x = Flatten()(base_model.output)
+        x = Flatten()(x)
 
     if(args.MODEL_START == 2):
         x = GlobalAveragePooling2D()(x)
