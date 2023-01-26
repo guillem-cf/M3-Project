@@ -20,5 +20,8 @@ python 1.baseline.py --experiment_name model_21 --MODEL_START 1 --MODEL_HID 1024
 python 1.baseline.py --experiment_name model_22 --MODEL_START 1 --MODEL_HID 512 256
 python 1.baseline.py --experiment_name model_31 --MODEL_START 1 --REMOVE_BLOCK 1
 python 1.baseline.py --experiment_name model_32 --MODEL_START 2 --REMOVE_BLOCK 1
-
+python 1.baseline.py --experiment_name model_33 --MODEL_START 1 --REMOVE_BLOCK 1 --MODEL_HID 1024
+python 1.baseline.py --experiment_name model_34 --MODEL_START 2 --REMOVE_BLOCK 1 --MODEL_HID 1024
+python 1.baseline.py --experiment_name model_35 --MODEL_START 1 --REMOVE_BLOCK 1 --MODEL_HID 512
+python 1.baseline.py --experiment_name model_36 --MODEL_START 2 --REMOVE_BLOCK 1 --MODEL_HID 512
 
