@@ -1,17 +1,13 @@
-from tensorflow.keras.applications.vgg16 import VGG16
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras import backend as K
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import TensorBoard
 import matplotlib
+from tensorflow.keras import backend as K
+from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import plot_model
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
 
 train_data_dir = "/ghome/mcv/datasets/MIT_split/train"
 val_data_dir = "/ghome/mcv/datasets/MIT_split/test"
@@ -56,7 +52,6 @@ model = Model(inputs=base_model.input, outputs=x)
 plot_model(model, to_file="modelVGG16b.png", show_shapes=True, show_layer_names=True)
 for layer in base_model.layers:
     layer.trainable = False
-
 
 model.compile(loss="categorical_crossentropy", optimizer="adadelta", metrics=["accuracy"])
 for layer in model.layers:
@@ -112,11 +107,9 @@ history = model.fit(
     callbacks=[],
 )
 
-
 result = model.evaluate(test_generator)
 print(result)
 print(history.history.keys())
-
 
 # list all data in history
 

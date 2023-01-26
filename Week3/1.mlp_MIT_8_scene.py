@@ -3,8 +3,8 @@ import argparse
 import matplotlib
 import tensorflow as tf
 import wandb
+from tensorflow.keras.layers import Dense, Reshape, BatchNormalization, Dropout
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Flatten, Dense, Reshape, BatchNormalization, Dropout
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import plot_model
 from wandb.keras import WandbCallback
@@ -49,19 +49,19 @@ MODEL_FNAME = '/home/group10/m3/my_first_mlp.h5'
 """
 
 config = dict(
-    model_name = args.experiment_name,
+    model_name=args.experiment_name,
     learning_rate=args.LEARNING_RATE,
     momentum=args.MOMENTUM,
     architecture="MLP",
     dataset="MIT",
     optimizer=args.OPTIMIZER,  # sgd, adam, rmsprop
     loss=args.LOSS,
-    image_size = args.IMG_SIZE,
-    batch_size = args.BATCH_SIZE,
-    epochs = args.EPOCHS,
-    weight_decay = args.WEIGHT_DECAY,
-    dropout = args.DROPOUT,
-    model = args.MODEL,
+    image_size=args.IMG_SIZE,
+    batch_size=args.BATCH_SIZE,
+    epochs=args.EPOCHS,
+    weight_decay=args.WEIGHT_DECAY,
+    dropout=args.DROPOUT,
+    model=args.MODEL,
 )
 
 wandb.init(
@@ -80,7 +80,7 @@ print("Building MLP model...\n")
 
 # Build the Multi Layer Perceptron model
 
-if(args.MODEL == 0): # initial model
+if (args.MODEL == 0):  # initial model
 
     model = Sequential()
     model.add(
@@ -89,169 +89,163 @@ if(args.MODEL == 0): # initial model
     model.add(Dense(units=2048, activation="relu", name="second"))
     model.add(Dense(units=8, activation="softmax"))
 
-elif(args.MODEL == 1): # adding batch normalization
-    
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            model.add(Dense(units=2048, activation="relu", name="second"))
-            model.add(BatchNormalization())
-            model.add(Dense(units=1024, activation="relu", name="third"))
-            model.add(BatchNormalization())
-            model.add(Dense(units=512, activation="relu", name="fourth"))
-            model.add(BatchNormalization())
-            model.add(Dense(units=256, activation="relu", name="fifth"))
-            model.add(BatchNormalization())
-            model.add(Dense(units=8, activation="softmax"))
+elif (args.MODEL == 1):  # adding batch normalization
 
-elif(args.MODEL == 2): # adding Dropuout
-    
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            model.add(Dense(units=2048, activation="relu", name="second"))
-            model.add(Dropout(0.5))
-            model.add(Dense(units=1024, activation="relu", name="third"))
-            model.add(Dropout(0.5))
-            model.add(Dense(units=512, activation="relu", name="fourth"))
-            model.add(Dropout(0.5))
-            model.add(Dense(units=256, activation="relu", name="fifth"))
-            model.add(Dropout(0.5))
-            model.add(Dense(units=8, activation="softmax"))
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    model.add(Dense(units=2048, activation="relu", name="second"))
+    model.add(BatchNormalization())
+    model.add(Dense(units=1024, activation="relu", name="third"))
+    model.add(BatchNormalization())
+    model.add(Dense(units=512, activation="relu", name="fourth"))
+    model.add(BatchNormalization())
+    model.add(Dense(units=256, activation="relu", name="fifth"))
+    model.add(BatchNormalization())
+    model.add(Dense(units=8, activation="softmax"))
 
-elif(args.MODEL == 3): # adding batch normalization and dropout
-    
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            model.add(Dense(units=2048, activation="relu", name="second"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            model.add(Dense(units=1024, activation="relu", name="third"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            model.add(Dense(units=512, activation="relu", name="fourth"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            model.add(Dense(units=256, activation="relu", name="fifth"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            model.add(Dense(units=8, activation="softmax"))
+elif (args.MODEL == 2):  # adding Dropuout
 
-elif(args.MODEL == 4): # starting with a bigger layer and 4 hidden layers 
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            initializer = tf.keras.initializers.GlorotNormal() #default
-                    
-            model.add(Dense(units=4096, activation="relu",kernel_initializer=initializer, name="second"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            
-            model.add(Dense(units=2048, activation="relu",kernel_initializer=initializer, name="second"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    model.add(Dense(units=2048, activation="relu", name="second"))
+    model.add(Dropout(0.5))
+    model.add(Dense(units=1024, activation="relu", name="third"))
+    model.add(Dropout(0.5))
+    model.add(Dense(units=512, activation="relu", name="fourth"))
+    model.add(Dropout(0.5))
+    model.add(Dense(units=256, activation="relu", name="fifth"))
+    model.add(Dropout(0.5))
+    model.add(Dense(units=8, activation="softmax"))
 
-            model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="second"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+elif (args.MODEL == 3):  # adding batch normalization and dropout
 
-            model.add(Dense(units=512, activation="relu",kernel_initializer=initializer,name="third"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    model.add(Dense(units=2048, activation="relu", name="second"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(units=1024, activation="relu", name="third"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(units=512, activation="relu", name="fourth"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(units=256, activation="relu", name="fifth"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+    model.add(Dense(units=8, activation="softmax"))
 
-               
-            model.add(Dense(units=8, activation="softmax"))
+elif (args.MODEL == 4):  # starting with a bigger layer and 4 hidden layers
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    initializer = tf.keras.initializers.GlorotNormal()  # default
+
+    model.add(Dense(units=4096, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
+    model.add(Dense(units=2048, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
+    model.add(Dense(units=512, activation="relu", kernel_initializer=initializer, name="third"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
+    model.add(Dense(units=8, activation="softmax"))
 
 
-elif(args.MODEL == 5): # starting with a bigger layer and 4 hidden layers
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            #initializer = tf.keras.initializers.GlorotNormal() #default
-            initializer = tf.keras.initializers.RandomNormal()
-            #initializer = tf.keras.initializers.RandomUniform()
-            #initializer = tf.keras.initializers.TruncatedNormal()
-                    
-            model.add(Dense(units=4096, activation="relu",kernel_initializer=initializer, name="second"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            
-            model.add(Dense(units=2048, activation="relu",kernel_initializer=initializer, name="third"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+elif (args.MODEL == 5):  # starting with a bigger layer and 4 hidden layers
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    # initializer = tf.keras.initializers.GlorotNormal() #default
+    initializer = tf.keras.initializers.RandomNormal()
+    # initializer = tf.keras.initializers.RandomUniform()
+    # initializer = tf.keras.initializers.TruncatedNormal()
 
-            model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="fourth"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model.add(Dense(units=4096, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-            model.add(Dense(units=256, activation="relu",kernel_initializer=initializer,name="fifht"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model.add(Dense(units=2048, activation="relu", kernel_initializer=initializer, name="third"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-               
-            model.add(Dense(units=8, activation="softmax"))
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="fourth"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-elif(args.MODEL == 6): # 4 hidden layers with two of the same size
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            initializer = tf.keras.initializers.GlorotNormal() #default
-                    
-            model.add(Dense(units=4096, activation="relu",kernel_initializer=initializer, name="second"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
-            
-            model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="third"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model.add(Dense(units=256, activation="relu", kernel_initializer=initializer, name="fifht"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-            model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="fourth"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model.add(Dense(units=8, activation="softmax"))
 
-            model.add(Dense(units=256, activation="relu",kernel_initializer=initializer,name="fifth"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+elif (args.MODEL == 6):  # 4 hidden layers with two of the same size
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    initializer = tf.keras.initializers.GlorotNormal()  # default
 
-               
-            model.add(Dense(units=8, activation="softmax"))
+    model.add(Dense(units=4096, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-elif(args.MODEL == 7): # 4 hidden layers but NOT seccuentially decreasing their size by half and dropout at the end
-            model = Sequential()
-            model.add(
-                Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
-                        dtype='float32'))
-            initializer = tf.keras.initializers.GlorotNormal() #default
-                    
-            model.add(Dense(units=4096, activation="relu",kernel_initializer=initializer, name="second"))
-            model.add(BatchNormalization())
-                 
-            model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="third"))
-            model.add(BatchNormalization())
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="third"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-            model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="fourth"))
-            model.add(BatchNormalization())
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="fourth"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-            model.add(Dense(units=256, activation="relu",kernel_initializer=initializer,name="fifth"))
-            #model.add(Dense(units=512, activation="relu",kernel_initializer=initializer,name="fifth"))
-            model.add(BatchNormalization())
-            model.add(Dropout(0.5))
+    model.add(Dense(units=256, activation="relu", kernel_initializer=initializer, name="fifth"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
 
-               
-            model.add(Dense(units=8, activation="softmax"))
+    model.add(Dense(units=8, activation="softmax"))
 
-           
-           
+elif (args.MODEL == 7):  # 4 hidden layers but NOT seccuentially decreasing their size by half and dropout at the end
+    model = Sequential()
+    model.add(
+        Reshape((args.IMG_SIZE * args.IMG_SIZE * 3,), input_shape=(args.IMG_SIZE, args.IMG_SIZE, 3), name='first',
+                dtype='float32'))
+    initializer = tf.keras.initializers.GlorotNormal()  # default
+
+    model.add(Dense(units=4096, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(BatchNormalization())
+
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="third"))
+    model.add(BatchNormalization())
+
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="fourth"))
+    model.add(BatchNormalization())
+
+    model.add(Dense(units=256, activation="relu", kernel_initializer=initializer, name="fifth"))
+    # model.add(Dense(units=512, activation="relu",kernel_initializer=initializer,name="fifth"))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))
+
+    model.add(Dense(units=8, activation="softmax"))
+
 if args.OPTIMIZER == "sgd":
     opt = tf.keras.optimizers.SGD(learning_rate=args.LEARNING_RATE, momentum=args.MOMENTUM,
-                                        weight_decay=args.WEIGHT_DECAY)
+                                  weight_decay=args.WEIGHT_DECAY)
 elif args.OPTIMIZER == "adam":
     opt = tf.keras.optimizers.Adam(learning_rate=args.LEARNING_RATE, weight_decay=args.WEIGHT_DECAY)
 elif args.OPTIMIZER == "rmsprop":

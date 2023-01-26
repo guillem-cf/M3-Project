@@ -1,14 +1,16 @@
 from __future__ import print_function
 
-import matplotlib.pyplot as plt
 import argparse
+
+import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Flatten, Dense, Reshape, BatchNormalization, Dropout
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from utils import *
 import wandb
+from tensorflow.keras.layers import Dense, Reshape
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from wandb.keras import WandbCallback
+
+from utils import *
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
@@ -46,19 +48,19 @@ MODEL_FNAME = '/home/group10/m3/patch_based_mlp.h5'
 """
 
 config = dict(
-    model_name = args.experiment_name,
+    model_name=args.experiment_name,
     learning_rate=args.LEARNING_RATE,
     momentum=args.MOMENTUM,
     architecture="MLP",
     dataset="MIT",
     optimizer=args.OPTIMIZER,  # sgd, adam, rmsprop
     loss=args.LOSS,
-    image_size = args.IMG_SIZE,
-    batch_size = args.BATCH_SIZE,
-    epochs = args.EPOCHS,
-    weight_decay = args.WEIGHT_DECAY,
-    dropout = args.DROPOUT,
-    model = args.MODEL,
+    image_size=args.IMG_SIZE,
+    batch_size=args.BATCH_SIZE,
+    epochs=args.EPOCHS,
+    weight_decay=args.WEIGHT_DECAY,
+    dropout=args.DROPOUT,
+    model=args.MODEL,
 )
 
 wandb.init(
@@ -75,11 +77,11 @@ def build_mlp(input_size=args.PATCH_SIZE, phase="TRAIN"):
     model.add(
         Reshape((input_size * input_size * 3,), input_shape=(input_size, input_size, 3), name='first',
                 dtype='float32'))
-    initializer = tf.keras.initializers.RandomNormal()       
-    model.add(Dense(units=3072, activation="relu",kernel_initializer=initializer, name="second")) 
-    model.add(Dense(units=2048, activation="relu",kernel_initializer=initializer, name="third"))
-    model.add(Dense(units=1024, activation="relu",kernel_initializer=initializer, name="fourth"))
-    model.add(Dense(units=256, activation="relu",kernel_initializer=initializer,name="fifth"))
+    initializer = tf.keras.initializers.RandomNormal()
+    model.add(Dense(units=3072, activation="relu", kernel_initializer=initializer, name="second"))
+    model.add(Dense(units=2048, activation="relu", kernel_initializer=initializer, name="third"))
+    model.add(Dense(units=1024, activation="relu", kernel_initializer=initializer, name="fourth"))
+    model.add(Dense(units=256, activation="relu", kernel_initializer=initializer, name="fifth"))
 
     if phase == "TEST":
         model.add(
@@ -234,7 +236,8 @@ for class_dir in os.listdir(directory):
     for imname in os.listdir(os.path.join(directory, class_dir)):
         im = Image.open(os.path.join(directory, class_dir, imname))
         patches = image.extract_patches_2d(
-            np.array(im), (args.PATCH_SIZE, args.PATCH_SIZE), max_patches=(int(np.asarray(im).shape[0]/args.PATCH_SIZE)**2)
+            np.array(im), (args.PATCH_SIZE, args.PATCH_SIZE),
+            max_patches=(int(np.asarray(im).shape[0] / args.PATCH_SIZE) ** 2)
         )
         out = model.predict(patches / 255.0)
         if args.AGGREGATION == "mean":

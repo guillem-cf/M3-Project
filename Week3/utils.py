@@ -4,7 +4,6 @@ import os
 import numpy as np
 from PIL import Image
 from sklearn.feature_extraction import image
-from sklearn.cluster import MiniBatchKMeans
 
 
 def softmax(x):
@@ -35,7 +34,8 @@ def generate_image_patches_db(in_directory, out_directory, patch_size=64):
                 im = Image.open(os.path.join(in_directory, split_dir, class_dir, imname))
                 print(im.size)
                 print("Processed images: " + str(count) + " / " + str(total), end="\r")
-                patches = image.extract_patches_2d(np.array(im), (64, 64), max_patches=(int(np.asarray(im).shape[0]/patch_size)**2))
+                patches = image.extract_patches_2d(np.array(im), (64, 64),
+                                                   max_patches=(int(np.asarray(im).shape[0] / patch_size) ** 2))
                 for i, patch in enumerate(patches):
                     patch = Image.fromarray(patch)
                     patch.save(
@@ -47,7 +47,3 @@ def generate_image_patches_db(in_directory, out_directory, patch_size=64):
                         )
                     )
     print("\n")
-
-
-
-

@@ -2,14 +2,11 @@ import argparse
 import pickle as pkl
 import pandas as pd
 
-
 import matplotlib
 import tensorflow as tf
 import wandb
 from tensorflow.keras.models import Sequential, Model, load_model
-from tensorflow.keras.layers import Flatten, Dense, Reshape
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import plot_model
 from wandb.keras import WandbCallback
 
 from utils import *
@@ -20,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-from sklearn.preprocessing import normalize,  LabelBinarizer, StandardScaler
+from sklearn.preprocessing import normalize, LabelBinarizer, StandardScaler
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -55,18 +52,18 @@ MODEL_FNAME = '/home/group10/m3/my_first_mlp.h5'
 """
 
 config = dict(
-    model_name = args.experiment_name,
+    model_name=args.experiment_name,
     learning_rate=args.LEARNING_RATE,
     momentum=args.MOMENTUM,
     architecture="MLP",
     dataset="MIT",
     optimizer=args.OPTIMIZER,  # sgd, adam, rmsprop
     loss=args.LOSS,
-    image_size = args.IMG_SIZE,
-    batch_size = args.BATCH_SIZE,
-    epochs = args.EPOCHS,
-    weight_decay = args.WEIGHT_DECAY,
-    dropout = args.DROPOUT,
+    image_size=args.IMG_SIZE,
+    batch_size=args.BATCH_SIZE,
+    epochs=args.EPOCHS,
+    weight_decay=args.WEIGHT_DECAY,
+    dropout=args.DROPOUT,
 )
 
 # wandb.init(
@@ -102,7 +99,7 @@ elif args.OUTPUT_LAYER == "fifth":
 model.summary()
 
 PATCH_SIZE = model.layers[0].input.shape[1:3]
-NUM_PATCHES = (args.IMG_SIZE//PATCH_SIZE.as_list()[0])**2
+NUM_PATCHES = (args.IMG_SIZE // PATCH_SIZE.as_list()[0]) ** 2
 
 
 def get_features(image_filenames, model_layer):
@@ -119,12 +116,12 @@ def get_features(image_filenames, model_layer):
         #     break
     return np.array(features)
 
+
 # Get features for all images in the training set
 train_features = get_features(train_images_filenames, model_layer)
 
 # Get features for all images in the test set
 test_features = get_features(test_images_filenames, model_layer)
-
 
 print(f'Train features shape: {train_features.shape}')
 print(f'Train labels shape: {len(train_labels)}')
@@ -137,17 +134,13 @@ classifier, scores, accuracy = svm(train_features, train_labels, test_features, 
 
 print(scores)
 
-
-
 # Save pandas dataframe scores in a .jpg file
 # path = "deep_features_svm/accuracy_" + args.experiment_name + ".txt"
 # np.savetxt(path, scores.values, fmt='%d')
 path = "deep_features_svm/accuracy_" + args.experiment_name + ".csv"
 scores.to_csv(path, sep='\t', encoding='utf-8')
 
-
 print(f'Accuracy = {accuracy}')
-
 
 labels = [
     "Opencountry",
@@ -168,4 +161,3 @@ labels = [
 #     labels,
 #     classifier,
 # )
-

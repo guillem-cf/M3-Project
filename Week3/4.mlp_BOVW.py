@@ -2,18 +2,14 @@ import argparse
 import pickle as pkl
 import pandas as pd
 
-
 import matplotlib
 import tensorflow as tf
-import wandb
 from tensorflow.keras.models import Sequential, Model, load_model
-from tensorflow.keras.layers import Flatten, Dense, Reshape
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import plot_model
 from wandb.keras import WandbCallback
 
 from utils import *
-from BOVW import BoVW, svm, plotROC_BWVW
+from BOVW import BoVW
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -21,8 +17,6 @@ import numpy as np
 from PIL import Image
 
 from sklearn.feature_extraction import image
-
-from sklearn.preprocessing import normalize,  LabelBinarizer, StandardScaler
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -32,7 +26,8 @@ for gpu in gpus:
 parser = argparse.ArgumentParser(description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument("--PATCHES_DIR", type=str, help="Patches path", default="./MIT_split_patches")
-parser.add_argument("--MODEL_FNAME", type=str, default="./best_models/patch_based_mlp_patchsize32.h5", help="Model path")
+parser.add_argument("--MODEL_FNAME", type=str, default="./best_models/patch_based_mlp_patchsize32.h5",
+                    help="Model path")
 parser.add_argument("--WEIGHTS_FNAME", type=str, default="./weights/patch_based/patch_based_mlp_", help="Weights path")
 parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=32)
 parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=16)
@@ -58,19 +53,19 @@ MODEL_FNAME = '/home/group10/m3/my_first_mlp.h5'
 """
 
 config = dict(
-    model_name = args.experiment_name,
+    model_name=args.experiment_name,
     learning_rate=args.LEARNING_RATE,
     momentum=args.MOMENTUM,
     architecture="MLP",
     dataset="MIT",
     optimizer=args.OPTIMIZER,  # sgd, adam, rmsprop
     loss=args.LOSS,
-    image_size = args.IMG_SIZE,
-    batch_size = args.BATCH_SIZE,
-    epochs = args.EPOCHS,
-    weight_decay = args.WEIGHT_DECAY,
-    dropout = args.DROPOUT,
-    model = args.MODEL,
+    image_size=args.IMG_SIZE,
+    batch_size=args.BATCH_SIZE,
+    epochs=args.EPOCHS,
+    weight_decay=args.WEIGHT_DECAY,
+    dropout=args.DROPOUT,
+    model=args.MODEL,
 )
 
 # wandb.init(
@@ -95,14 +90,14 @@ test_labels = pkl.load(open("MIT_split/test_labels.dat", "rb"))
 
 # Load the model
 model = load_model(args.MODEL_FNAME)
-model_layer = Model(inputs=model.input, outputs=model.layers[-4].output)# outputs=model.get_layer("dense").output)
+model_layer = Model(inputs=model.input, outputs=model.layers[-4].output)  # outputs=model.get_layer("dense").output)
 model.summary()
 
 PATCH_SIZE = model.layers[0].input.shape[1:3]
-NUM_PATCHES = (args.IMG_SIZE//PATCH_SIZE.as_list()[0])**2
+NUM_PATCHES = (args.IMG_SIZE // PATCH_SIZE.as_list()[0]) ** 2
 
-print("Patch size: ", PATCH_SIZE)   # (64, 64)
-print("Num patches: ", NUM_PATCHES) # 16
+print("Patch size: ", PATCH_SIZE)  # (64, 64)
+print("Num patches: ", NUM_PATCHES)  # 16
 
 
 def get_features(image_filenames, model_layer):
@@ -120,6 +115,7 @@ def get_features(image_filenames, model_layer):
         #     break
     return np.array(features)
 
+
 # def get_features(images_filenames, model):
 #     print(len(images_filenames))
 #     print(NUM_PATCHES)
@@ -134,19 +130,16 @@ def get_features(image_filenames, model_layer):
 #     return descriptors
 
 
-
 # Get features for all images in the training set
 train_features = get_features(train_images_filenames, model_layer)
 
 # Get features for all images in the test set
 test_features = get_features(test_images_filenames, model_layer)
 
-
 print(f'Train features shape: {train_features.shape}')
 print(f'Train labels shape: {len(train_labels)}')
 print(f'Test features shape: {test_features.shape}')
 print(f'Test labels shape: {len(test_labels)}')
-
 
 scores = pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
 
@@ -160,9 +153,7 @@ path = "deep_features_bovw/accuracy_" + args.experiment_name + ".csv"
 # # Save pandas dataframe scores in a .jpg file
 scores.to_csv(path, sep='\t', encoding='utf-8')
 
-
 print(f'Done!')
-
 
 # labels = [
 #     "Opencountry",
@@ -183,4 +174,3 @@ print(f'Done!')
 #     labels,
 #     classifier,
 # )
-

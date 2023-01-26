@@ -1,22 +1,18 @@
+import matplotlib
 import tensorflow as tensorflow
+import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras import backend as K
-from tensorflow.keras.utils import plot_model
+from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import TensorBoard
-from tensorflow.keras.applications.densenet import preprocess_input
-import matplotlib
+from tensorflow.keras.utils import plot_model
 from tensorflow.python.keras.callbacks import (
     EarlyStopping,
     ModelCheckpoint,
     ReduceLROnPlateau,
 )
-import wandb
 from wandb.keras import WandbCallback
 
 matplotlib.use("Agg")

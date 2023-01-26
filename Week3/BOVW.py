@@ -1,46 +1,39 @@
-import numpy as np
-import pandas as pd
-
-from sklearn.cluster import MiniBatchKMeans
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.preprocessing import normalize,  LabelBinarizer, StandardScaler
-from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.model_selection import cross_val_score, KFold, StratifiedKFold, RepeatedStratifiedKFold
-from sklearn.metrics import balanced_accuracy_score, accuracy_score, f1_score, confusion_matrix, roc_curve, auc, RocCurveDisplay
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.svm import SVC
-from sklearn.mixture import GaussianMixture as GMM
+from functools import partial
+from itertools import cycle
 
 import matplotlib.pyplot as plt
-from functools import partial
-import time
+import numpy as np
 import pandas as pd
-from tqdm.notebook import trange, tqdm
-import optuna
-from optuna.visualization.matplotlib import plot_contour, plot_edf, plot_intermediate_values, plot_optimization_history, plot_parallel_coordinate, plot_param_importances, plot_slice, plot_pareto_front
-import os
-from optuna.samplers import TPESampler
-import concurrent.futures
-import gc
-import seaborn as sns
-from itertools import cycle
-import random
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.metrics import balanced_accuracy_score, accuracy_score, f1_score, confusion_matrix, roc_curve, auc, \
+    RocCurveDisplay
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelBinarizer, StandardScaler
+from sklearn.svm import SVC
+
 
 # Function that normalizes an array x using L^2 norm
 def l2_norm(x):
     norm = np.linalg.norm(x, ord=2)
     x_norm = x / norm
     return x_norm
+
+
 # Function that normalizes an array x using power norm
 def power_norm(x):
     x = np.sign(x) * np.abs(x) ** 0.5
     norm = np.linalg.norm(x, ord=2)
     x_norm = x / norm
     return x_norm
+
+
 def no_norm(x):
     return x
+
 
 class Dummy:
     """Dummy dimensionality reduction method that keeps all the original features."""
@@ -76,21 +69,18 @@ metrics = {
 }
 
 
-
-def cluster_local_features(n_clusters,features):
+def cluster_local_features(n_clusters, features):
     codebook = MiniBatchKMeans(
         n_clusters=n_clusters,
         n_init="auto",
         verbose=False,
         batch_size=min(20 * n_clusters, features.shape[0]),
         compute_labels=False,
-        reassignment_ratio=10**-4,
+        reassignment_ratio=10 ** -4,
         random_state=42
     )
     codebook.fit(features)
     return codebook
-
-
 
 
 def compute_histogram(assigned_clusters, num_clusters, normalization=norms["l2"]):
@@ -103,16 +93,14 @@ def compute_histogram(assigned_clusters, num_clusters, normalization=norms["l2"]
     return bag_visual_words
 
 
-
 def obtain_spatial_histogram_visual_words(
-    features,
-    position_features,
-    tr_lengths=None,
-    codebook=None,
-    normalization=norms["l2"],
-    pyramid=None,
+        features,
+        position_features,
+        tr_lengths=None,
+        codebook=None,
+        normalization=norms["l2"],
+        pyramid=None,
 ):
-
     if tr_lengths is None:
         tr_lengths = [len(feature) for feature in features]
         features = np.vstack(features)
@@ -123,7 +111,7 @@ def obtain_spatial_histogram_visual_words(
     lengths = np.cumsum(lengths)
 
     splitted_labels = [
-        assigned_labels[lengths[i] : lengths[i + 1]] for i in range(len(lengths) - 1)
+        assigned_labels[lengths[i]: lengths[i + 1]] for i in range(len(lengths) - 1)
     ]
 
     if pyramid is None:
@@ -148,14 +136,14 @@ def obtain_spatial_histogram_visual_words(
     for (x0, y0, x, y) in list(pyramid["iterate"]()):
         # Get the labels of the features that are in the current division
         splitted_labels = [
-            assigned_labels[lengths[i] : lengths[i + 1]][
-                get_positions(position_features[lengths[i] : lengths[i + 1]], x0, y0, x, y)
+            assigned_labels[lengths[i]: lengths[i + 1]][
+                get_positions(position_features[lengths[i]: lengths[i + 1]], x0, y0, x, y)
             ]
             for i in range(len(lengths) - 1)
         ]
         # Compute the histogram of the current division
         histograms[
-            :, num_patches * num_clusters : (num_patches + 1) * num_clusters
+        :, num_patches * num_clusters: (num_patches + 1) * num_clusters
         ] = compute_histogram(splitted_labels, num_clusters, normalization=normalization)
         num_patches += 1
 
@@ -166,12 +154,12 @@ class BoVWClassifier(BaseEstimator, ClassifierMixin):
     """Image classifier using Bag of Visual Words."""
 
     def __init__(
-        self,
-        clustering_method,
-        classifier,
-        reduction_method,
-        normalization,
-        spatial_pyramid_div=None,
+            self,
+            clustering_method,
+            classifier,
+            reduction_method,
+            normalization,
+            spatial_pyramid_div=None,
     ):
         self.clustering_method = clustering_method
         self.classifier = classifier
@@ -269,12 +257,11 @@ def compute_metrics(truth, preds):
 
 
 # Apply the Bag of Visual Words model to the features
-def BoVW(train_descriptors, train_labels_descrip, test_descriptors, test_labels_descrip, 
-            n_clusters = 798, 
-            dim_red = "None", n_components = 69, 
-            kernel_type = "RBF", best_gamma= 0.004454186007581258, best_C = 4.380442487942557, probability = True, 
-            best_norm = "power"):
-    
+def BoVW(train_descriptors, train_labels_descrip, test_descriptors, test_labels_descrip,
+         n_clusters=798,
+         dim_red="None", n_components=69,
+         kernel_type="RBF", best_gamma=0.004454186007581258, best_C=4.380442487942557, probability=True,
+         best_norm="power"):
     clustering = partial(cluster_local_features, n_clusters)
     # reduction_method = dim_reduction[dim_red](n_components)
     reduction_method = dim_reduction[dim_red]()
@@ -294,9 +281,8 @@ def BoVW(train_descriptors, train_labels_descrip, test_descriptors, test_labels_
     return scores
 
 
-def svm(train_descriptors, train_labels_descrip, test_descriptors, test_labels_descrip, 
-            kernel_type = "RBF", best_gamma= 0.004454186007581258, best_C = 4.380442487942557, probability = True):
-    
+def svm(train_descriptors, train_labels_descrip, test_descriptors, test_labels_descrip,
+        kernel_type="RBF", best_gamma=0.004454186007581258, best_C=4.380442487942557, probability=True):
     scaler = StandardScaler()
     scaler.fit(train_descriptors)
     train_descriptors = scaler.transform(train_descriptors)
@@ -315,16 +301,14 @@ def svm(train_descriptors, train_labels_descrip, test_descriptors, test_labels_d
     return classifier, scores, accuracy
 
 
-
 def plotROC_BWVW(
-    train_labels_descrip,
-    test_labels_descrip,
-    train_descriptors,
-    test_descriptors,
-    labels,
-    classifier,
+        train_labels_descrip,
+        test_labels_descrip,
+        train_descriptors,
+        test_descriptors,
+        labels,
+        classifier,
 ):
-
     y_onehot_train = LabelBinarizer().fit_transform(train_labels_descrip)
     y_onehot_test = LabelBinarizer().fit_transform(test_labels_descrip)
     n_samples, n_classes = y_onehot_test.shape
@@ -396,5 +380,3 @@ def plotROC_BWVW(
     plt.title("One-vs-Rest multiclass ROC")
     plt.legend()
     plt.show()
-
-
