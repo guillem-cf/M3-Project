@@ -43,7 +43,7 @@ def train(args):
                                                        batch_size=args.BATCH_SIZE,
                                                        class_mode='categorical')
 
-    #base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
+    #base_model = DenseNet121(include_top=True, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     # base_model.trainable = False
     base_model.summary()
