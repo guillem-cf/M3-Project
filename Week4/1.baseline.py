@@ -85,8 +85,10 @@ def train(args):
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
     # saving the best model based on val_loss
-    mc = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
-                         monitor='val_loss', mode='min', save_best_only=True)
+    mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
+                          monitor='val_loss', mode='min', save_best_only=True)
+    mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
+                          monitor='val_accuracy', mode='max', save_best_only=True)
     reduce_lr = ReduceLROnPlateau(
         monitor='val_loss', factor=0.2, patience=10, min_lr=1e-6)
 
@@ -99,7 +101,7 @@ def train(args):
                         validation_data=validation_generator,
                         validation_steps=(
                                 int(args.VALIDATION_SAMPLES // args.BATCH_SIZE) + 1),
-                        callbacks=[WandbCallback()])
+                        callbacks=[WandbCallback(), mc1, mc2])
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
     # https://keras.io/api/callbacks/model_checkpoint/
