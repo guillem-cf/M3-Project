@@ -1,25 +1,31 @@
 import argparse
-
-import matplotlib
 import matplotlib.pyplot as plt
+import tensorflow as tf
 import tensorflow as tensorflow
-import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.layers import Flatten
+from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras import layers
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras import backend as K
 from tensorflow.keras.utils import plot_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.applications.densenet import preprocess_input
+import matplotlib
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+import wandb
 from wandb.keras import WandbCallback
 
 matplotlib.use('Agg')
-
+"""
 print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices('GPU')))
 gpus = tensorflow.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
+"""
 
 
 def train(args):
@@ -42,67 +48,21 @@ def train(args):
                                                            args.IMG_WIDTH, args.IMG_HEIGHT),
                                                        batch_size=args.BATCH_SIZE,
                                                        class_mode='categorical')
-
-    #base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
-    base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
-    # base_model.trainable = False
-    base_model.summary()
-    # plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
-
-    base_model.trainable = False
-
-    # OPTION 1
-    """ 
-    Global Average Pooling (GAP) is used as a way to reduce the spatial dimensions of the feature maps, 
-    before passing them through the final fully connected layers. 
-    It works by taking the average of all the values in each feature map, resulting in a single value for each feature map. 
-    This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
-    """
-
-    if (args.REMOVE_BLOCK == 1): #trainable a false
-        x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
-
-    elif (args.REMOVE_BLOCK == 2):
-        x = base_model.get_layer('pool4_relu').output
-
-    elif (args.REMOVE_BLOCK == 3):
-        x = base_model.get_layer('pool3_conv').output  
-
-    elif (args.REMOVE_BLOCK == 4):
-        x = base_model.get_layer('pool3_relu').output  
-    
-    elif (args.REMOVE_BLOCK == 5):
-        x = base_model.get_layer('pool2_relu').output  
-
-    elif (args.REMOVE_BLOCK == 6):
-        x = base_model.get_layer('pool2_relu').output  
-    
-    #else: # posar trainable a true llavors
-       # x = base_model.layers[-2].output
-
-    #base_model.get_layer('avg_pool').trainable = True
-
-    #x = GlobalAveragePooling2D()(x)
-
-    if args.MODEL_HID is not None:
-        for layer in args.MODEL_HID:
-            x = Dense(layer, activation='relu')(x)
-
-    output = Dense(8, activation='softmax', name='predictionsProf')(x)
-
-    model = Model(inputs=base_model.input, outputs=output)
+    model = tf.keras.models.load_model('./checkpoint/' + args.MODEL_NAME)
+    plot_model(model, to_file='./images/all_model.png', show_shapes=True, show_layer_names=True)
+    model.trainable = True
     for layer in model.layers:
+        if isinstance(layer, layers.BatchNormalization):
+            layer.trainable = False
         print(layer.name, layer.trainable)
     model.summary()
-    plot_model(model, to_file='./images/modelDenseNet121_' + args.experiment_name + '.png',
-               show_shapes=True, show_layer_names=True)
 
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
     # saving the best model based on val_loss
-    mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
-                          monitor='val_loss', mode='min', save_best_only=True)
-    mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
+    mc = ModelCheckpoint('./checkpoint/bestloss_' + args.experiment_name + '_model_checkpoint' + '.h5',
+                         monitor='val_loss', mode='min', save_best_only=True)
+    mc2 = ModelCheckpoint('./checkpoint/bestaccuracy_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
     reduce_lr = ReduceLROnPlateau(
         monitor='val_loss', factor=0.2, patience=10, min_lr=1e-6)
@@ -116,16 +76,11 @@ def train(args):
                         validation_data=validation_generator,
                         validation_steps=(
                                 int(args.VALIDATION_SAMPLES // args.BATCH_SIZE) + 1),
-                        callbacks=[WandbCallback(),es, mc1, mc2])
-    # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
-    # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
-    # https://keras.io/api/callbacks/model_checkpoint/
+                        callbacks=[WandbCallback(), mc, mc2])
 
     result = model.evaluate(test_generator)
     print(result)
     print(history.history.keys())
-
-    # list all data in history
 
     if True:
         # summarize history for accuracy
@@ -194,8 +149,10 @@ if __name__ == "__main__":
                         help="Experiment name", default="baseline")
     parser.add_argument("--VALIDATION_SAMPLES", type=int,
                         help="Number of validation samples", default=807)
+    parser.add_argument("--MODEL_START", type=int,
+                        help="1: flatten, 2:GAP", default=1)
     parser.add_argument("--MODEL_HID", nargs="+", type=int, help="Indicate the model to use", default=None)
-    parser.add_argument("--REMOVE_BLOCK", type=int, help="Remove block", default=1)
+    parser.add_argument("--MODEL_NAME", type=str, help="Indicate name model to use", default=None)
 
     args = parser.parse_args()
 
