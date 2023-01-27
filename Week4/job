@@ -34,14 +34,16 @@ conda activate m3
 #python 1.baseline.py --experiment_name baselineGAP_50 
 #python 1.2.all_model.py --experiment_name baselineProfeAll --MODEL_NAME best_baselineProfe_model_checkpoint.h5 --EPOCHS 50
 
-#python 1.baseline.py --experiment_name cut1_pool --EPOCHS 50 --REMOVE_BLOCK 1
-#python 1.baseline.py --experiment_name cut2_pool --EPOCHS 50 --REMOVE_BLOCK 2
-#python 1.baseline.py --experiment_name cut3_pool --EPOCHS 50 --REMOVE_BLOCK 3
+python 1.baseline.py --experiment_name cut1_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 1
+python 1.baseline.py --experiment_name cut2_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 2
+python 1.baseline.py --experiment_name cut3_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 3
 
-python 1.2.all_model.py --experiment_name cut1_pool_all --MODEL_NAME best_cut1_pool_model_checkpoint.h5 --EPOCHS 300
-python 1.2.all_model.py --experiment_name cut2_pool_all --MODEL_NAME best_cut2_pool_model_checkpoint.h5 --EPOCHS 300
-python 1.2.all_model.py --experiment_name cut3_pool_all --MODEL_NAME best_cut3_pool_model_checkpoint.h5 --EPOCHS 300
-python 1.2.all_model.py --experiment_name baselineProfeAll_300 --MODEL_NAME best_baselineProfe_model_checkpoint.h5 --EPOCHS 300
+python 1.2.all_model.py --experiment_name cut1_pool_D1024_all --MODEL_NAME best_cut1_pool_D1024_model_checkpoint.h5 --EPOCHS 300
+python 1.2.all_model.py --experiment_name cut2_pool_D1024_all --MODEL_NAME best_cut2_pool_D1024_model_checkpoint.h5 --EPOCHS 300
+python 1.2.all_model.py --experiment_name cut3_pool_D1024_all --MODEL_NAME best_cut3_pool_D1024_model_checkpoint.h5 --EPOCHS 300
+
+python 1.baseline.py --experiment_name baselineProfe_D1024 --EPOCHS 300
+python 1.2.all_model.py --experiment_name baselineProfeAll_D1024_all --MODEL_NAME best_baselineProfe_D1024_model_checkpoint.h5 --EPOCHS 300
 
 
 

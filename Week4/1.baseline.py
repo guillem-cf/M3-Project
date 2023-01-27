@@ -6,8 +6,7 @@ import tensorflow as tensorflow
 import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Flatten
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import plot_model
@@ -63,7 +62,6 @@ def train(args):
         x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
     if (args.REMOVE_BLOCK == 2): #trainable a false
         x = base_model.get_layer('pool3_pool').output  # -2 block + -2 transient
-
     if (args.REMOVE_BLOCK == 3): #trainable a false
         x = base_model.get_layer('pool2_pool').output  # -3 block + -3 transient
 
@@ -78,6 +76,7 @@ def train(args):
             x = Dense(layer, activation='relu')(x)"""
 
     x = GlobalAveragePooling2D()(x)
+    x = Dense(1024, activation='relu')(x)
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
     #model = Model(inputs=base_model.input, outputs=output)
@@ -215,3 +214,5 @@ if __name__ == "__main__":
     )
 
     train(args)
+
+    wandb.finish()
