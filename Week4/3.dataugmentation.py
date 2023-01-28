@@ -7,6 +7,8 @@ from tensorflow.keras.layers import Flatten, Dense, GlobalAveragePooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import plot_model
+from tensorflow.keras import layers
+
 
 import optuna
 from optuna.visualization.matplotlib import plot_contour, plot_edf, plot_intermediate_values, plot_optimization_history, plot_parallel_coordinate, plot_param_importances, plot_slice, plot_pareto_front
@@ -149,10 +151,12 @@ def train():
         class_mode="categorical",
     )
 
-    base_model = DenseNet121(include_top=False, weights="imagenet", input_shape=(224, 224, 3))
-    base_model.trainable = False
-    # base_model.summary()
-    # plot_model(base_model, to_file='modelDenseNet121.png', show_shapes=True, show_layer_names=True)
+    base_model = DenseNet121(include_top=False, weights="imagenet", input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
+    base_model.trainable = True
+    
+    for layer in base_model.layers:
+        if isinstance(layer, layers.BatchNormalization):
+            layer.trainable = False
 
     # We choose the model 1
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
