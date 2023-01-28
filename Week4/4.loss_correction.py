@@ -79,7 +79,7 @@ args = parser.parse_args()
 
 sweep_config = {
         'method': 'random',
-        'name': 'Task3',
+        'name': 'Task4',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters': 
         {
@@ -163,7 +163,7 @@ def train():
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
     if wandb.config.BATCH_NORM_ACTIVE:
         x = BatchNormalization()(x)
-        
+
     x = GlobalAveragePooling2D()(x)
     x = Dropout(wandb.config.DROPOUT)(x)
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
@@ -323,4 +323,4 @@ def train():
     sweep_id = wandb.sweep(sweep = sweep_config, project="M3_W4")
     """
 
-wandb.agent(sweep_id, function=train) # , count=37)
+wandb.agent(sweep_id, function=train, count=10)

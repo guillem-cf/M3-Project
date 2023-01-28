@@ -101,8 +101,7 @@ sweep_config = {
             'data_augmentation_Z': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
             'data_augmentation_W': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
             'data_augmentation_H': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'values': [0, 0.2]}, #{'max': 0.20, 'min': 0.0, 'type': 'double'}
-            'data_augmentation_Rescale': {'values': [True, False]},
+            'data_augmentation_S': {'values': [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
         }   
     }
 
@@ -321,4 +320,4 @@ def train():
     sweep_id = wandb.sweep(sweep = sweep_config, project="M3_W4")
     """
 
-wandb.agent(sweep_id, function=train) # , count=37)
+wandb.agent(sweep_id, function=train , count=10)

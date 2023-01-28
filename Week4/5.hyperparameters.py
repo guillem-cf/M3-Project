@@ -247,4 +247,4 @@ def train():
         'val_acc': history.history["val_accuracy"], 
         'val_loss': history.history["val_loss"]
     })
-wandb.agent(sweep_id, function=train) # , count=37)
+wandb.agent(sweep_id, function=train, count=30)
