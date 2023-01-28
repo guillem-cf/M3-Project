@@ -13,7 +13,7 @@ conda activate m3
 # python 1.baseline.py --experiment_name task2_3_cut1_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 1 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_3
 # python 1.baseline.py --experiment_name task2_4_cut1_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 1 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_4
 
-python 1.2.all_model.py --experiment_name task2_1_cut1_pool_D1024_all --MODEL_NAME best_task2_1_cut1_pool_D1024_model_checkpoint.h5 --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_1
+python 2.small_dataset.py --experiment_name task2_1_cut1_pool_all --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_1
 # python 1.2.all_model.py --experiment_name task2_1_cut1_pool_D1024_all --MODEL_NAME best_task_2_2_cut1_pool_D1024_model_checkpoint.h5 --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_2
 # python 1.2.all_model.py --experiment_name task2_1_cut1_pool_D1024_all --MODEL_NAME best_task_2_3_cut1_pool_D1024_model_checkpoint.h5 --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_3
 # python 1.2.all_model.py --experiment_name task2_1_cut1_pool_D1024_all --MODEL_NAME best_task_2_4_cut1_pool_D1024_model_checkpoint.h5 --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_4

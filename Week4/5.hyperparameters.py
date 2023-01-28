@@ -78,7 +78,7 @@ args = parser.parse_args()
 
 
 sweep_config = {
-        'method': 'grid',
+        'method': 'random',
         'name': 'Task5',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters': 
@@ -87,17 +87,17 @@ sweep_config = {
             'MODEL_FNAME':     {'value': args.MODEL_FNAME},
             'DATASET_DIR':     {'value': args.DATASET_DIR},
             'LEARNING_RATE':   {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
-            'EPOCHS':          {'values': [10, 20, 40, 60, 80, 100, 150, 200, 250, 300]},
-            'BATCH_SIZE':      {'values': [10, 32, 64, 128, 256, 512]},
+            'EPOCHS':          {'value': 300},
+            'BATCH_SIZE':      {'values': [10, 32, 64, 128]},
             'OPTIMIZER':       {'values': ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']},
-            'MOMENTUM':        {'values': [0.0, 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]},
+            'MOMENTUM':        {'values': [0.0, 0.2, 0.4, 0.6, 0.8, 0.9]},
             'LOSS':            {'value': args.LOSS},
             'IMG_WIDTH':       {'value': args.IMG_WIDTH},
             'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0,5, 0.6, 0.8]},
+            'DROPOUT':         {'values': },
             'WEIGHT_DECAY':    {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-            'BATCH_NORM_ACTIVE': {'values': [True, False]},
+            'BATCH_NORM_ACTIVE': {'values': },
             'data_augmentation_HF': {'values': True}, # [True, False]},
             'data_augmentation_R': {'values': # POSAR ELS VALORS QUE ENS SURTIN DEL DATA AUGMENTATION # [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
             'data_augmentation_Z': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
@@ -182,6 +182,7 @@ def train():
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
     if wandb.config.BATCH_NORM_ACTIVE:
         x = BatchNormalization()(x)
+
     x = GlobalAveragePooling2D()(x)
     x = Dropout(wandb.config.DROPOUT)(x)
     x = Dense(8, activation='softmax', name='predictionsProf')(x)

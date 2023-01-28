@@ -78,7 +78,7 @@ args = parser.parse_args()
 
 
 sweep_config = {
-        'method': 'random',
+        'method': 'grid',
         'name': 'Task3',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters': 
@@ -96,13 +96,12 @@ sweep_config = {
             'DROPOUT':         {'value': args.DROPOUT},
             'WEIGHT_DECAY':    {'value': args.WEIGHT_DECAY},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-            'data_augmentation_HF': {'values': [True, False]},
-            'data_augmentation_R': {'values': [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'values': [0, 0.2]}, #{'max': 0.20, 'min': 0.0, 'type': 'double'}
-            'data_augmentation_Rescale': {'values': [True, False]},
+            'data_augmentation_HF': {'value': False},
+            'data_augmentation_R': {'value': 0},  #{'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'value': 0},  #{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'value': 0},  #{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'value': 0},  #{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'value': 0}   #{'max': 0.20, 'min': 0.0, 'type': 'double'}
         }   
     }
 
@@ -163,7 +162,7 @@ def train():
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
 
     x = GlobalAveragePooling2D()(x)
-    # x = Dense(1024, activation='relu')(x)
+   
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
@@ -190,7 +189,7 @@ def train():
         epochs=wandb.config.EPOCHS,
         validation_data=validation_generator,
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
-        callbacks=[WandbCallback(), mc1, mc2, es],
+        callbacks=[WandbCallback(), mc1, mc2],
     )
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau

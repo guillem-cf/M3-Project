@@ -93,16 +93,16 @@ sweep_config = {
             'LOSS':            {'value': args.LOSS},
             'IMG_WIDTH':       {'value': args.IMG_WIDTH},
             'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'value': args.DROPOUT},
+            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0,5, 0.6, 0.8]},
             'WEIGHT_DECAY':    {'value': args.WEIGHT_DECAY},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-            'data_augmentation_HF': {'values': [True, False]},
-            'data_augmentation_R': {'values': [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'values': [0, 0.2]}, #{'max': 0.20, 'min': 0.0, 'type': 'double'}
-            'data_augmentation_Rescale': {'values': [True, False]},
+            'BATCH_NORM_ACTIVE': {'values': [True, False]},
+            'data_augmentation_HF': {'value': True},
+            'data_augmentation_R': {'values': # 0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'values': # 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'values': # 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'values': # 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'values': # 0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
         }   
     }
 
@@ -161,9 +161,11 @@ def train():
 
     # We choose the model 1
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
-
+    if wandb.config.BATCH_NORM_ACTIVE:
+        x = BatchNormalization()(x)
+        
     x = GlobalAveragePooling2D()(x)
-    # x = Dense(1024, activation='relu')(x)
+    x = Dropout(wandb.config.DROPOUT)(x)
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
@@ -190,7 +192,7 @@ def train():
         epochs=wandb.config.EPOCHS,
         validation_data=validation_generator,
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
-        callbacks=[WandbCallback(), mc1, mc2, es],
+        callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
     )
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
