@@ -1,5 +1,5 @@
 import matplotlib
-import tensorflow as tensorflow
+import tensorflow as tf
 import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
@@ -87,7 +87,7 @@ sweep_config = {
             'MODEL_FNAME':     {'value': args.MODEL_FNAME},
             'DATASET_DIR':     {'value': args.DATASET_DIR},
             'LEARNING_RATE':   {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
-            'EPOCHS':          {'values': [10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350]},
+            'EPOCHS':          {'values': [10, 20, 40, 60, 80, 100, 150, 200, 250, 300]},
             'BATCH_SIZE':      {'values': [10, 32, 64, 128, 256, 512]},
             'OPTIMIZER':       {'values': ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']},
             'MOMENTUM':        {'values': [0.0, 0.2, 0.4, 0.6, 0.8, 0.9, 0.99]},
@@ -98,12 +98,12 @@ sweep_config = {
             'WEIGHT_DECAY':    {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
             'BATCH_NORM_ACTIVE': {'values': [True, False]},
-            'data_augmentation_HF': {'values': [True, False]},
-            'data_augmentation_R': {'values': [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'values': [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'values': [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
+            'data_augmentation_HF': {'values': True}, # [True, False]},
+            'data_augmentation_R': {'values': # POSAR ELS VALORS QUE ENS SURTIN DEL DATA AUGMENTATION # [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'values': # [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
         }   
     }
 
@@ -152,6 +152,24 @@ def train():
         batch_size=wandb.config.BATCH_SIZE,
         class_mode="categorical",
     )
+    
+    def get_optimizer(optimizer="adam"):
+        "Select optmizer between adam and sgd with momentum"
+        if optimizer.lower() == "adam":
+            return tf.keras.optimizers.Adam(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+        if optimizer.lower() == "sgd":
+            return tf.keras.optimizers.SGD(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM, weight_decay=wandb.config.WEIGHT_DECAY)
+        if optimizer.lower() == "rmsprop":
+            return tf.keras.optimizers.RMSprop(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+        if optimizer.lower() == "adagrad":
+            return tf.keras.optimizers.Adagrad(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+        if optimizer.lower() == "adadelta":
+            return tf.keras.optimizers.Adadelta(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+        if optimizer.lower() == "adamax":
+            return tf.keras.optimizers.Adamax(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+        if optimizer.lower() == "nadam":
+            return tf.keras.optimizers.Nadam(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+        
 
     base_model = DenseNet121(include_top=False, weights="imagenet", input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model.trainable = True
@@ -162,23 +180,25 @@ def train():
 
     # We choose the model 1
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
-    x = BatchNormalization()(x)
+    if wandb.config.BATCH_NORM_ACTIVE:
+        x = BatchNormalization()(x)
     x = GlobalAveragePooling2D()(x)
     x = Dropout(wandb.config.DROPOUT)(x)
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=10)
+    reduce_lr = ReduceLROnPlateau(
+        monitor='val_loss', factor=0.2, patience=8, min_lr=1e-6)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)
     mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
-    reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=15, min_lr=1e-6)
-
-    model.compile(loss="categorical_crossentropy", optimizer="adadelta", metrics=["accuracy"])
+    
+    
+    model.compile(loss="categorical_crossentropy", optimizer=get_optimizer(wandb.config.OPTIMIZER), metrics=["accuracy"])
 
     # preprocessing_function=preprocess_input,
 
