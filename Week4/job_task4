@@ -8,7 +8,7 @@
 
 eval "$(conda shell.bash hook)"
 conda activate m3
-python 3.dataugmentation-new.py --experiment_name task3_cut1_pool_D1024 --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_1
+python 3.dataugmentation.py --experiment_name task3_cut1_pool_D1024 --EPOCHS 300 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_1
 # python 1.baseline.py --experiment_name task2_2_cut1_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 1 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_2
 # python 1.baseline.py --experiment_name task2_3_cut1_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 1 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_3
 # python 1.baseline.py --experiment_name task2_4_cut1_pool_D1024 --EPOCHS 300 --REMOVE_BLOCK 1 --DATASET_DIR /ghome/group07/M3-Project-new/Week4/MIT_small_train_4
