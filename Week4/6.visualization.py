@@ -32,8 +32,14 @@ for name_img in images:
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     features = model.predict(x)
-    # save the feature map
-    square = 8
+    # save the feature map in heatmap color map rgb
+    plt.imshow(features[0, :, :, 0], cmap='jet')
+    # save with image
+    plt.savefig('./XAI/' + i + '_feature.png')
+
+
+    """
+    square = 2
     ix = 1
     for _ in range(square):
         for _ in range(square):
@@ -46,3 +52,4 @@ for name_img in images:
             ix += 1
     # show the figure
     plt.savefig('./XAI/' + i + '_feature.png')
+    """
