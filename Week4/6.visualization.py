@@ -16,7 +16,7 @@ for name_img in images:
     x = tf.keras.preprocessing.image.img_to_array(img)
     data = ([x], None)
     explainer = GradCAM()
-    grid = explainer.explain(data, model, layer_name='conv4_block16_1_conv', class_index=0)
+    grid = explainer.explain(data, model, layer_name='conv4_block5_1_conv', class_index=0)
     i = name_img.split('/')[1]
     explainer.save(grid, output_dir='./XAI/', output_name=i + '_cam.png')
     """
@@ -28,7 +28,7 @@ for name_img in images:
     grid = explainer.explain(data, model, ['conv4_block16_1_conv'])
     explainer.save(grid, output_dir='./XAI/', output_name=i + '_activation.png')
     """
-    model = Model(inputs=model.input, outputs=model.get_layer('conv4_block16_1_conv').output)
+    model = Model(inputs=model.input, outputs=model.get_layer('conv4_block5_1_conv').output)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     features = model.predict(x)
