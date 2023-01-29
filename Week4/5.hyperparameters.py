@@ -94,7 +94,7 @@ sweep_config = {
             'LOSS':            {'value': args.LOSS},
             'IMG_WIDTH':       {'value': args.IMG_WIDTH},
             'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0.5, .6, 0.8, 0.9]},
+            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 0.9]},
             'WEIGHT_DECAY':    {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
             'BATCH_NORM_ACTIVE': {'values': [True, False]},
@@ -210,6 +210,8 @@ def train():
         validation_data=validation_generator,
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
         callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
+        use_multiprocessing=True,
+        workers=16
     )
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau

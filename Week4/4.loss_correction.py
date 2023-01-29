@@ -79,7 +79,7 @@ args = parser.parse_args()
 
 sweep_config = {
         'method': 'random',
-        'name': 'Task4_server',
+        'name': 'Task4_server_2',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters': 
         {
@@ -93,10 +93,10 @@ sweep_config = {
             'LOSS':            {'value': args.LOSS},
             'IMG_WIDTH':       {'value': args.IMG_WIDTH},
             'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0,5, 0.6, 0.8]},
+            'DROPOUT':         {'value': 0.5}, # [0.0, 0.2, 0.4, 0.5, 0.6, 0.8]},
             'WEIGHT_DECAY':    {'value': args.WEIGHT_DECAY},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-            'BATCH_NORM_ACTIVE': {'values': [True, False]},
+            'BATCH_NORM_ACTIVE': {'value': False}, # [True, False]},
             'data_augmentation_HF': {'value': True},
             'data_augmentation_R': {'value': 0}, # 0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
             'data_augmentation_Z': {'value': 0.2},# 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
@@ -113,9 +113,7 @@ def train():
     wandb.init(project=args.experiment_name)
 
     datagen = ImageDataGenerator(
-        featurewise_center=True,
         samplewise_center=False,
-        featurewise_std_normalization=True,
         samplewise_std_normalization=False,
         preprocessing_function=preprocess_input,
         rotation_range=wandb.config.data_augmentation_R,
@@ -173,7 +171,7 @@ def train():
     # plot_model(model, to_file="modelDenseNet121c.png", show_shapes=True, show_layer_names=True)
 
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)
@@ -193,6 +191,8 @@ def train():
         validation_data=validation_generator,
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
         callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
+        use_multiprocessing=True,
+        workers=8
     )
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
