@@ -79,31 +79,31 @@ args = parser.parse_args()
 
 sweep_config = {
         'method': 'random',
-        'name': 'Task5',
+        'name': 'Task4_Task5',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters': 
         {
             'experiment_name': {'value': args.experiment_name},
             'MODEL_FNAME':     {'value': args.MODEL_FNAME},
             'DATASET_DIR':     {'value': args.DATASET_DIR},
-            'LEARNING_RATE':   {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
+            'LEARNING_RATE':   {'values': [0.00001, 0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
             'EPOCHS':          {'value': 300},
             'BATCH_SIZE':      {'values': [10, 32, 64, 128]},
             'OPTIMIZER':       {'values': ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']},
-            'MOMENTUM':        {'values': [0.0, 0.2, 0.4, 0.6, 0.8, 0.9]},
+            'MOMENTUM':        {'values': [0.0, 0.2, 0.4, 0.5, .6, 0.8, 0.9]},
             'LOSS':            {'value': args.LOSS},
             'IMG_WIDTH':       {'value': args.IMG_WIDTH},
             'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'values': },
+            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0.5, .6, 0.8, 0.9]},
             'WEIGHT_DECAY':    {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-            'BATCH_NORM_ACTIVE': {'values': },
+            'BATCH_NORM_ACTIVE': {'values': [True, False]},
             'data_augmentation_HF': {'values': True}, # [True, False]},
-            'data_augmentation_R': {'values': # POSAR ELS VALORS QUE ENS SURTIN DEL DATA AUGMENTATION # [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'values': # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'values': # [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
+            'data_augmentation_R': {'value': 0},# POSAR ELS VALORS QUE ENS SURTIN DEL DATA AUGMENTATION # [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'value': 0.2},# [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'value': 0},# [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'value': 0},# [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'value': 0},# [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
         }   
     }
 
@@ -160,7 +160,7 @@ def train():
         if optimizer.lower() == "sgd":
             return tf.keras.optimizers.SGD(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM, weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "rmsprop":
-            return tf.keras.optimizers.RMSprop(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.RMSprop(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM, weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "adagrad":
             return tf.keras.optimizers.Adagrad(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "adadelta":
@@ -189,9 +189,9 @@ def train():
 
     model = Model(inputs=base_model.input, outputs=x)
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=10)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
     reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=8, min_lr=1e-6)
+        monitor='val_loss', factor=0.2, patience=10, min_lr=1e-6)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)

@@ -3,7 +3,7 @@ import tensorflow as tensorflow
 import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.layers import Flatten, Dense, GlobalAveragePooling2D
+from tensorflow.keras.layers import Flatten, Dense, GlobalAveragePooling2D, BatchNormalization, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import plot_model
@@ -79,7 +79,7 @@ args = parser.parse_args()
 
 sweep_config = {
         'method': 'random',
-        'name': 'Task4',
+        'name': 'Task4_server',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters': 
         {
@@ -98,11 +98,11 @@ sweep_config = {
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
             'BATCH_NORM_ACTIVE': {'values': [True, False]},
             'data_augmentation_HF': {'value': True},
-            'data_augmentation_R': {'values': # 0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'values': # 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'values': # 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'values': # 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'values': # 0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
+            'data_augmentation_R': {'value': 0}, # 0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'value': 0.2},# 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'value': 0},# 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'value': 0},# 0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'value': 0} # 0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
         }   
     }
 
