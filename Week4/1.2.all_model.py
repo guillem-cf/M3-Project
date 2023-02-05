@@ -2,17 +2,10 @@ import argparse
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow as tensorflow
-from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.models import Model
 from tensorflow.keras import layers
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras import backend as K
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.applications.densenet import preprocess_input
 import matplotlib
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
@@ -58,13 +51,13 @@ def train(args):
     model.summary()
 
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+    EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
     # saving the best model based on val_loss
     mc = ModelCheckpoint('./checkpoint/bestloss_' + args.experiment_name + '_model_checkpoint' + '.h5',
                          monitor='val_loss', mode='min', save_best_only=True)
     mc2 = ModelCheckpoint('./checkpoint/bestaccuracy_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
-    reduce_lr = ReduceLROnPlateau(
+    ReduceLROnPlateau(
         monitor='val_loss', factor=0.2, patience=10, min_lr=1e-6)
 
     model.compile(loss='categorical_crossentropy',

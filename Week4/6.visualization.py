@@ -3,7 +3,6 @@ from keras import Model
 from tensorflow.keras.applications.densenet import preprocess_input
 import numpy as np
 import matplotlib.pyplot as plt
-from tf_explain.core import OcclusionSensitivity, ExtractActivations
 from tf_explain.core.grad_cam import GradCAM
 
 model = tf.keras.models.load_model('./checkpoint/best_task4_server_cut1_pool_model_checkpoint.h5')

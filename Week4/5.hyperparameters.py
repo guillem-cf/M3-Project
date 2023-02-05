@@ -3,17 +3,12 @@ import tensorflow as tf
 import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.layers import Flatten, Dense, GlobalAveragePooling2D, BatchNormalization, Dropout
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, BatchNormalization, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import plot_model
 from tensorflow.keras import layers
 
 
-import optuna
-from optuna.visualization.matplotlib import plot_contour, plot_edf, plot_intermediate_values, plot_optimization_history, plot_parallel_coordinate, plot_param_importances, plot_slice, plot_pareto_front
-import os
-from optuna.samplers import TPESampler
 
 from tensorflow.python.keras.callbacks import (
     EarlyStopping,

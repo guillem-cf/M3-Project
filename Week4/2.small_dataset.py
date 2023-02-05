@@ -3,17 +3,12 @@ import tensorflow as tensorflow
 import wandb
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.layers import Flatten, Dense, GlobalAveragePooling2D
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import plot_model
 from tensorflow.keras import layers
 
 
-import optuna
-from optuna.visualization.matplotlib import plot_contour, plot_edf, plot_intermediate_values, plot_optimization_history, plot_parallel_coordinate, plot_param_importances, plot_slice, plot_pareto_front
-import os
-from optuna.samplers import TPESampler
 
 from tensorflow.python.keras.callbacks import (
     EarlyStopping,
@@ -170,13 +165,13 @@ def train():
     # plot_model(model, to_file="modelDenseNet121c.png", show_shapes=True, show_layer_names=True)
 
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+    EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)
     mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
-    reduce_lr = ReduceLROnPlateau(
+    ReduceLROnPlateau(
         monitor='val_loss', factor=0.2, patience=10, min_lr=1e-6)
 
     model.compile(loss="categorical_crossentropy", optimizer="adadelta", metrics=["accuracy"])

@@ -1,56 +1,22 @@
-import matplotlib
-import tensorflow as tf
 import wandb
-from tensorflow.keras.applications.densenet import DenseNet121
-from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras.layers import Flatten, Dense, GlobalAveragePooling2D, BatchNormalization, Dropout
-from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras import layers
+import tensorflow as tf
 
-
-import optuna
-from optuna.visualization.matplotlib import plot_contour, plot_edf, plot_intermediate_values, plot_optimization_history, plot_parallel_coordinate, plot_param_importances, plot_slice, plot_pareto_front
-import os
-from optuna.samplers import TPESampler
-
-from tensorflow.python.keras.callbacks import (
-    EarlyStopping,
-    ModelCheckpoint,
-    ReduceLROnPlateau,
-)
 from wandb.keras import WandbCallback
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+from model import MyModel
+from utils import save_plots, train_generator, test_generator, validation_generator
+
 import argparse
 
-print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices("GPU")))
-gpus = tensorflow.config.experimental.list_physical_devices("GPU")
+print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))
+gpus = tf.config.experimental.list_physical_devices("GPU")
 for gpu in gpus:
-    tensorflow.config.experimental.set_memory_growth(gpu, True)
+    tf.config.experimental.set_memory_growth(gpu, True)
+
 
 def train(args):
-    wandb.init(project=args.experiment_name)
-
-    base_model = DenseNet121(include_top=False, weights="imagenet", input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
-    base_model.trainable = True
-    
-    for layer in base_model.layers:
-        if isinstance(layer, layers.BatchNormalization):
-            layer.trainable = False
-
-    # We choose the model 1
-    x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
-    if wandb.config.BATCH_NORM_ACTIVE:
-        x = BatchNormalization()(x)
-
-    x = GlobalAveragePooling2D()(x)
-    x = Dropout(wandb.config.DROPOUT)(x)
-    x = Dense(8, activation='softmax', name='predictionsProf')(x)
-
-    model = Model(inputs=base_model.input, outputs=x)
+    model = MyModel(name=args.experiment_name, input_shape=(224, 224, 3))
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
     reduce_lr = ReduceLROnPlateau(
@@ -60,11 +26,9 @@ def train(args):
                           monitor='val_loss', mode='min', save_best_only=True)
     mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
-    
-    
-    model.compile(loss="categorical_crossentropy", optimizer=get_optimizer(wandb.config.OPTIMIZER), metrics=["accuracy"])
 
-    # preprocessing_function=preprocess_input,
+    model.compile(loss="categorical_crossentropy", optimizer=get_optimizer(wandb.config.OPTIMIZER),
+                  metrics=["accuracy"])
 
     history = model.fit(
         train_generator,
@@ -74,50 +38,16 @@ def train(args):
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
         callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
         use_multiprocessing=True,
-        workers=16
+        workers=8
     )
-    # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
-    # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
-    # https://keras.io/api/callbacks/model_checkpoint/
-
     result = model.evaluate(test_generator)
     print(result)
     print(history.history.keys())
-
-    # list all data in history
-
-    if True:
-        # summarize history for accuracy
-        plt.plot(history.history["accuracy"])
-        plt.plot(history.history["val_accuracy"])
-        plt.title("model accuracy")
-        plt.ylabel("accuracy")
-        plt.xlabel("epoch")
-        plt.legend(["train", "validation"], loc="upper left")
-        plt.savefig("images/accuracy_" + args.experiment_name + ".jpg")
-        plt.close()
-        # summarize history for loss
-        plt.plot(history.history["loss"])
-        plt.plot(history.history["val_loss"])
-        plt.title("model loss")
-        plt.ylabel("loss")
-        plt.xlabel("epoch")
-        plt.legend(["train", "validation"], loc="upper left")
-        plt.savefig("images/loss_" + args.experiment_name + ".jpg")
-
-    
-    wandb.log({
-        'train_acc': history.history["accuracy"],
-        'train_loss': history.history["loss"], 
-        'val_acc': history.history["val_accuracy"], 
-        'val_loss': history.history["val_loss"]
-    })
-wandb.agent(sweep_id, function=train, count=30)
-
+    save_plots(history, args)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-            description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-        )
+        description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
     parser.add_argument(
         "--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path"
@@ -158,3 +88,4 @@ if __name__ == "__main__":
     parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
 
     args = parser.parse_args()
+    wandb.init(project=args.experiment_name)

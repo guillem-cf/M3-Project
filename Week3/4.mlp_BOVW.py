@@ -4,15 +4,12 @@ import pandas as pd
 
 import matplotlib
 import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model, load_model
-from tensorflow.keras.utils import plot_model
-from wandb.keras import WandbCallback
+from tensorflow.keras.models import Model, load_model
 
 from utils import *
 from BOVW import BoVW
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
@@ -153,7 +150,7 @@ path = "deep_features_bovw/accuracy_" + args.experiment_name + ".csv"
 # # Save pandas dataframe scores in a .jpg file
 scores.to_csv(path, sep='\t', encoding='utf-8')
 
-print(f'Done!')
+print('Done!')
 
 # labels = [
 #     "Opencountry",

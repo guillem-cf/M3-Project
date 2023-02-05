@@ -4,20 +4,15 @@ import pandas as pd
 
 import matplotlib
 import tensorflow as tf
-import wandb
-from tensorflow.keras.models import Sequential, Model, load_model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from wandb.keras import WandbCallback
+from tensorflow.keras.models import Model, load_model
 
 from utils import *
-from BOVW import BoVW, svm, plotROC_BWVW
+from BOVW import svm
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-from sklearn.preprocessing import normalize, LabelBinarizer, StandardScaler
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 gpus = tf.config.experimental.list_physical_devices('GPU')
