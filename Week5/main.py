@@ -2,6 +2,8 @@ import argparse
 import wandb
 from utils import sweep
 from train import train
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -49,6 +51,7 @@ def main():
     wandb.init(project="M3_W5")
     wandb.config.update(args)
     wandb.agent(sweep_id, function=train(args))
+
 
 if __name__ == "__main__":
     main()
