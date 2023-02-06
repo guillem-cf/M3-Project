@@ -19,11 +19,7 @@ datagen = ImageDataGenerator(
     featurewise_std_normalization=True,
     samplewise_std_normalization=False,
     preprocessing_function=preprocess_input,
-    rotation_range=wandb.config.data_augmentation_R,
-    width_shift_range=wandb.config.data_augmentation_W,
-    height_shift_range=wandb.config.data_augmentation_H,
-    shear_range=wandb.config.data_augmentation_S,
-    zoom_range=wandb.config.data_augmentation_Z,
+    zoom_range=0.2,
     channel_shift_range=0.0,
     fill_mode="nearest",
     cval=0.0,
@@ -81,7 +77,9 @@ def sweep(args):
                 'IMG_HEIGHT': {'value': args.IMG_HEIGHT},
                 'DROPOUT': {'value': args.DROPOUT},
                 'WEIGHT_DECAY': {'value': args.WEIGHT_DECAY},
-                'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES}
+                'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
+                'data_augmentation_HF': {'values': True},
+                'data_augmentation_Z': {'value': 0.2}
             }
     }
     return sweep_config

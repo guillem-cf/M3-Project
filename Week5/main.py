@@ -48,10 +48,10 @@ def main():
     parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
 
     args = parser.parse_args()
-    sweep_config = sweep(args)
-    sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
     wandb.init(project="M3_W5", name=args.experiment_name)
     wandb.config.update(args)
+    sweep_config = sweep(args)
+    sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
     wandb.agent(sweep_id, function=train(args), count=1)
 
 
