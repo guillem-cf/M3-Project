@@ -9,4 +9,9 @@
 eval "$(conda shell.bash hook)"
 conda activate m3
 #python w4code_example_backup_profe.py
-python main.py --experiment_name baseline_Johnny 
+#python main.py --experiment_name baseline1 # with flatten
+#python main.py --experiment_name baseline1.1_BN_D --EPOCHS 50 # adding 1 conv layer
+
+#python main.py --experiment_name baseline1.2 --EPOCHS 30 # adding 1 conv layer + 1 dense after flatten
+
+python main.py --experiment_name baseline3_BN_D --EPOCHS 30 

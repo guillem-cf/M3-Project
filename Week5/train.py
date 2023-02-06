@@ -2,6 +2,7 @@ import tensorflow as tf
 import wandb
 from wandb.keras import WandbCallback
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.utils import plot_model
 from model import MyModel
 from utils import save_plots, get_data_train, get_data_validation, get_data_test, sweep
 import matplotlib
@@ -18,6 +19,10 @@ for gpu in gpus:
 def train(args):
     model = MyModel(name=args.experiment_name, filters=32, kernel_size=3, strides=1, pool_size=2,
                     dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
+    
+    plot_model(model, to_file='./images/model_'+ args.experiment_name + '.png',
+               show_shapes=True, show_layer_names=True)
+
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
     reduce_lr = ReduceLROnPlateau(

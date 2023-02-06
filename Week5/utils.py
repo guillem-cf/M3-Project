@@ -69,7 +69,7 @@ def get_data_test():
 def sweep(args):
     sweep_config = {
         'method': 'random',
-        'name': 'baseline',
+        'name': 'Sweep_' + args.experiment_name,
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters':
             {
