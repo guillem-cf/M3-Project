@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
+    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_small_train_1")
     parser.add_argument(
         "--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path"
     )
@@ -48,7 +48,7 @@ def main():
     args = parser.parse_args()
     sweep_config = sweep(args)
     sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
-    wandb.init(project="M3_W5")
+    wandb.init(project="M3_W5",name=args.experiment_name)
     wandb.config.update(args)
     wandb.agent(sweep_id, function=train(args), count=1)
 
