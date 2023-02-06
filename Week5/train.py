@@ -17,7 +17,7 @@ for gpu in gpus:
 
 def train(args):
     model = MyModel(name=args.experiment_name, filters=32, kernel_size=3, strides=1, pool_size=2,
-                    dropout=wandb.config.DROPOUT, non_linearities="relu")
+                    dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
     reduce_lr = ReduceLROnPlateau(
