@@ -18,7 +18,6 @@ class MyModel(tf.keras.Model):
     def __init__(self, name, filters, kernel_size, strides, pool_size, dropout, non_linearities):
         super().__init__(name=name)
         self.nl = nl[non_linearities]
-        self.dropout = tf.keras.layers.Dropout(0.5)
         self.Sequential = tf.keras.Sequential([
             tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=self.nl),
             tf.keras.layers.MaxPool2D(pool_size=pool_size),
@@ -33,6 +32,8 @@ class MyModel(tf.keras.Model):
             tf.keras.layers.Dropout(dropout),
             tf.keras.layers.Dense(8, activation=softmax)
         ])
+    def call(self, inputs):
+        return self.Sequential(inputs)
 """
 
 
