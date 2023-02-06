@@ -1,15 +1,12 @@
 import matplotlib
 import tensorflow as tf
 import wandb
+from tensorflow.keras import layers
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, BatchNormalization, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras import layers
-
-
-
 from tensorflow.python.keras.callbacks import (
     EarlyStopping,
     ModelCheckpoint,
@@ -26,10 +23,9 @@ gpus = tensorflow.config.experimental.list_physical_devices("GPU")
 for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
-
 parser = argparse.ArgumentParser(
-        description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
+    description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument(
     "--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path"
@@ -71,38 +67,38 @@ parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
 
 args = parser.parse_args()
 
-
 sweep_config = {
-        'method': 'random',
-        'name': 'Task4_Task5',
-        'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
-        'parameters': 
+    'method': 'random',
+    'name': 'Task4_Task5',
+    'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
+    'parameters':
         {
             'experiment_name': {'value': args.experiment_name},
-            'MODEL_FNAME':     {'value': args.MODEL_FNAME},
-            'DATASET_DIR':     {'value': args.DATASET_DIR},
-            'LEARNING_RATE':   {'values': [0.00001, 0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
-            'EPOCHS':          {'value': 300},
-            'BATCH_SIZE':      {'values': [10, 32, 64, 128]},
-            'OPTIMIZER':       {'values': ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']},
-            'MOMENTUM':        {'values': [0.0, 0.2, 0.4, 0.5, .6, 0.8, 0.9]},
-            'LOSS':            {'value': args.LOSS},
-            'IMG_WIDTH':       {'value': args.IMG_WIDTH},
-            'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'values': [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 0.9]},
-            'WEIGHT_DECAY':    {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
+            'MODEL_FNAME': {'value': args.MODEL_FNAME},
+            'DATASET_DIR': {'value': args.DATASET_DIR},
+            'LEARNING_RATE': {'values': [0.00001, 0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
+            'EPOCHS': {'value': 300},
+            'BATCH_SIZE': {'values': [10, 32, 64, 128]},
+            'OPTIMIZER': {'values': ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']},
+            'MOMENTUM': {'values': [0.0, 0.2, 0.4, 0.5, .6, 0.8, 0.9]},
+            'LOSS': {'value': args.LOSS},
+            'IMG_WIDTH': {'value': args.IMG_WIDTH},
+            'IMG_HEIGHT': {'value': args.IMG_HEIGHT},
+            'DROPOUT': {'values': [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 0.9]},
+            'WEIGHT_DECAY': {'values': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.3]},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
             'BATCH_NORM_ACTIVE': {'values': [True, False]},
-            'data_augmentation_HF': {'values': True}, # [True, False]},
-            'data_augmentation_R': {'value': 0},# POSAR ELS VALORS QUE ENS SURTIN DEL DATA AUGMENTATION # [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'value': 0.2},# [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'value': 0},# [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'value': 0},# [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'value': 0},# [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
-        }   
-    }
+            'data_augmentation_HF': {'values': True},  # [True, False]},
+            'data_augmentation_R': {'value': 0},
+            # POSAR ELS VALORS QUE ENS SURTIN DEL DATA AUGMENTATION # [0, 20]},#{'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'value': 0.2},  # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'value': 0},  # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'value': 0},  # [0, 0.2]},#{'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'value': 0},  # [0, 0.2]} #{'max': 0.20, 'min': 0.0, 'type': 'double'}
+        }
+}
 
-sweep_id = wandb.sweep(sweep = sweep_config, project="M3_W4")
+sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W4")
 
 
 def train():
@@ -147,28 +143,34 @@ def train():
         batch_size=wandb.config.BATCH_SIZE,
         class_mode="categorical",
     )
-    
+
     def get_optimizer(optimizer="adam"):
         "Select optmizer between adam and sgd with momentum"
         if optimizer.lower() == "adam":
-            return tf.keras.optimizers.Adam(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.Adam(learning_rate=wandb.config.LEARNING_RATE,
+                                            weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "sgd":
-            return tf.keras.optimizers.SGD(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.SGD(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM,
+                                           weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "rmsprop":
-            return tf.keras.optimizers.RMSprop(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.RMSprop(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM,
+                                               weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "adagrad":
-            return tf.keras.optimizers.Adagrad(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.Adagrad(learning_rate=wandb.config.LEARNING_RATE,
+                                               weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "adadelta":
-            return tf.keras.optimizers.Adadelta(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.Adadelta(learning_rate=wandb.config.LEARNING_RATE,
+                                                weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "adamax":
-            return tf.keras.optimizers.Adamax(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
+            return tf.keras.optimizers.Adamax(learning_rate=wandb.config.LEARNING_RATE,
+                                              weight_decay=wandb.config.WEIGHT_DECAY)
         if optimizer.lower() == "nadam":
-            return tf.keras.optimizers.Nadam(learning_rate=wandb.config.LEARNING_RATE, weight_decay=wandb.config.WEIGHT_DECAY)
-        
+            return tf.keras.optimizers.Nadam(learning_rate=wandb.config.LEARNING_RATE,
+                                             weight_decay=wandb.config.WEIGHT_DECAY)
 
     base_model = DenseNet121(include_top=False, weights="imagenet", input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model.trainable = True
-    
+
     for layer in base_model.layers:
         if isinstance(layer, layers.BatchNormalization):
             layer.trainable = False
@@ -192,9 +194,9 @@ def train():
                           monitor='val_loss', mode='min', save_best_only=True)
     mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
-    
-    
-    model.compile(loss="categorical_crossentropy", optimizer=get_optimizer(wandb.config.OPTIMIZER), metrics=["accuracy"])
+
+    model.compile(loss="categorical_crossentropy", optimizer=get_optimizer(wandb.config.OPTIMIZER),
+                  metrics=["accuracy"])
 
     # preprocessing_function=preprocess_input,
 
@@ -237,11 +239,12 @@ def train():
         plt.legend(["train", "validation"], loc="upper left")
         plt.savefig("images/loss_" + args.experiment_name + ".jpg")
 
-    
     wandb.log({
         'train_acc': history.history["accuracy"],
-        'train_loss': history.history["loss"], 
-        'val_acc': history.history["val_accuracy"], 
+        'train_loss': history.history["loss"],
+        'val_acc': history.history["val_accuracy"],
         'val_loss': history.history["val_loss"]
     })
+
+
 wandb.agent(sweep_id, function=train, count=30)

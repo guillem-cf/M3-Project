@@ -1,13 +1,12 @@
 import matplotlib
 import tensorflow as tensorflow
 import wandb
+from tensorflow.keras import layers
 from tensorflow.keras.applications.densenet import DenseNet121
 from tensorflow.keras.applications.densenet import preprocess_input
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras import layers
-
 from tensorflow.python.keras.callbacks import (
     EarlyStopping,
     ModelCheckpoint,

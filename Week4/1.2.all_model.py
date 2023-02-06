@@ -1,15 +1,14 @@
 import argparse
+
+import matplotlib
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import tensorflow as tensorflow
-from tensorflow.keras.applications.densenet import preprocess_input
-from tensorflow.keras import layers
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications.densenet import preprocess_input
-import matplotlib
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import wandb
+from tensorflow.keras import layers
+from tensorflow.keras.applications.densenet import preprocess_input
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import plot_model
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from wandb.keras import WandbCallback
 
 matplotlib.use('Agg')

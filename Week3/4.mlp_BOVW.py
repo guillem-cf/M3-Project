@@ -1,13 +1,13 @@
 import argparse
 import pickle as pkl
-import pandas as pd
 
 import matplotlib
+import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
 
-from utils import *
 from BOVW import BoVW
+from utils import *
 
 matplotlib.use("Agg")
 import numpy as np

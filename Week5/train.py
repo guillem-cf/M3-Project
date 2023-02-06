@@ -1,13 +1,13 @@
+import matplotlib
 import tensorflow as tf
 import wandb
-from wandb.keras import WandbCallback
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from wandb.keras import WandbCallback
+
 from model import MyModel
-from utils import save_plots, get_data_train, get_data_validation, get_data_test, sweep
-import matplotlib
+from utils import save_plots, get_data_train, get_data_validation, get_data_test
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))
 gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -18,6 +18,7 @@ for gpu in gpus:
 def train(args):
     model = MyModel(name=args.experiment_name, filters=32, kernel_size=3, strides=1, pool_size=2,
                     dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
+    model.summary()
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
     reduce_lr = ReduceLROnPlateau(
