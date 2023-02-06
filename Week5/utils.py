@@ -13,13 +13,12 @@ def preprocess_input(image):
     return image
 
 
-"""
 datagen = ImageDataGenerator(
     featurewise_center=True,
     samplewise_center=False,
     featurewise_std_normalization=True,
     samplewise_std_normalization=False,
-    preprocessing_function=,
+    preprocessing_function=preprocess_input,
     rotation_range=wandb.config.data_augmentation_R,
     width_shift_range=wandb.config.data_augmentation_W,
     height_shift_range=wandb.config.data_augmentation_H,
@@ -31,10 +30,6 @@ datagen = ImageDataGenerator(
     horizontal_flip=wandb.config.data_augmentation_HF,
     vertical_flip=False,
     rescale=None,
-)
-"""
-datagen = ImageDataGenerator(
-    preprocessing_function=preprocess_input,
 )
 
 
