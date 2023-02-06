@@ -50,7 +50,7 @@ def main():
     sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
     wandb.init(project="M3_W5")
     wandb.config.update(args)
-    wandb.agent(sweep_id, function=train(args))
+    wandb.agent(sweep_id, function=train(args), count=1)
 
 
 if __name__ == "__main__":

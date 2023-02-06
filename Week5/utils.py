@@ -49,7 +49,7 @@ def get_data_train():
 
 def get_data_validation():
     validation_generator = datagen.flow_from_directory(
-        wandb.config.DATASET_DIR + "/train",
+        wandb.config.DATASET_DIR + "/test",
         target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
         batch_size=wandb.config.BATCH_SIZE,
         class_mode="categorical",
@@ -68,7 +68,7 @@ def get_data_test():
 
 def sweep(args):
     sweep_config = {
-        'method': 'random',
+        # 'method': 'random',
         'name': 'baseline',
         'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
         'parameters':
