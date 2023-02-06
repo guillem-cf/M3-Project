@@ -8,8 +8,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import layers
 
-
-
 from tensorflow.python.keras.callbacks import (
     EarlyStopping,
     ModelCheckpoint,
@@ -26,10 +24,9 @@ gpus = tensorflow.config.experimental.list_physical_devices("GPU")
 for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
-
 parser = argparse.ArgumentParser(
-        description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
+    description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
 parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
 parser.add_argument(
     "--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path"
@@ -71,36 +68,35 @@ parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
 
 args = parser.parse_args()
 
-
 sweep_config = {
-        'method': 'grid',
-        'name': 'Task3',
-        'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
-        'parameters': 
+    'method': 'grid',
+    'name': 'Task3',
+    'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
+    'parameters':
         {
             'experiment_name': {'value': args.experiment_name},
-            'MODEL_FNAME':     {'value': args.MODEL_FNAME},
-            'DATASET_DIR':     {'value': args.DATASET_DIR},
-            'LEARNING_RATE':   {'value': args.LEARNING_RATE},
-            'EPOCHS':          {'value': args.EPOCHS},
-            'BATCH_SIZE':      {'value': args.BATCH_SIZE},
-            'OPTIMIZER':       {'value': args.OPTIMIZER},
-            'LOSS':            {'value': args.LOSS},
-            'IMG_WIDTH':       {'value': args.IMG_WIDTH},
-            'IMG_HEIGHT':      {'value': args.IMG_HEIGHT},
-            'DROPOUT':         {'value': args.DROPOUT},
-            'WEIGHT_DECAY':    {'value': args.WEIGHT_DECAY},
+            'MODEL_FNAME': {'value': args.MODEL_FNAME},
+            'DATASET_DIR': {'value': args.DATASET_DIR},
+            'LEARNING_RATE': {'value': args.LEARNING_RATE},
+            'EPOCHS': {'value': args.EPOCHS},
+            'BATCH_SIZE': {'value': args.BATCH_SIZE},
+            'OPTIMIZER': {'value': args.OPTIMIZER},
+            'LOSS': {'value': args.LOSS},
+            'IMG_WIDTH': {'value': args.IMG_WIDTH},
+            'IMG_HEIGHT': {'value': args.IMG_HEIGHT},
+            'DROPOUT': {'value': args.DROPOUT},
+            'WEIGHT_DECAY': {'value': args.WEIGHT_DECAY},
             'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
             'data_augmentation_HF': {'value': False},
-            'data_augmentation_R': {'value': 0},  #{'max': 20, 'min': 0, 'type': 'int'},
-            'data_augmentation_Z': {'value': 0},  #{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_W': {'value': 0},  #{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_H': {'value': 0},  #{'max': 0.20, 'min': 0.0, 'type': 'double'},
-            'data_augmentation_S': {'value': 0}   #{'max': 0.20, 'min': 0.0, 'type': 'double'}
-        }   
-    }
+            'data_augmentation_R': {'value': 0},  # {'max': 20, 'min': 0, 'type': 'int'},
+            'data_augmentation_Z': {'value': 0},  # {'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_W': {'value': 0},  # {'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_H': {'value': 0},  # {'max': 0.20, 'min': 0.0, 'type': 'double'},
+            'data_augmentation_S': {'value': 0}  # {'max': 0.20, 'min': 0.0, 'type': 'double'}
+        }
+}
 
-sweep_id = wandb.sweep(sweep = sweep_config, project="M3_W4")
+sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W4")
 
 
 def train():
@@ -148,7 +144,7 @@ def train():
 
     base_model = DenseNet121(include_top=False, weights="imagenet", input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model.trainable = True
-    
+
     for layer in base_model.layers:
         if isinstance(layer, layers.BatchNormalization):
             layer.trainable = False
@@ -157,7 +153,7 @@ def train():
     x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
 
     x = GlobalAveragePooling2D()(x)
-   
+
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
     model = Model(inputs=base_model.input, outputs=x)
@@ -215,18 +211,14 @@ def train():
         plt.legend(["train", "validation"], loc="upper left")
         plt.savefig("images/loss_" + args.experiment_name + ".jpg")
 
-    
     wandb.log({
         'train_acc': history.history["accuracy"],
-        'train_loss': history.history["loss"], 
-        'val_acc': history.history["val_accuracy"], 
+        'train_loss': history.history["loss"],
+        'val_acc': history.history["val_accuracy"],
         'val_loss': history.history["val_loss"]
     })
 
-
-
-# def main():
-
+    #  def main():
 
     # """
     # train_data_dir='/ghome/mcv/datasets/MIT_split/train'
@@ -315,4 +307,5 @@ def train():
     sweep_id = wandb.sweep(sweep = sweep_config, project="M3_W4")
     """
 
-wandb.agent(sweep_id, function=train) # , count=37)
+
+wandb.agent(sweep_id, function=train)  #  , count=37)

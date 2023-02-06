@@ -1,6 +1,7 @@
 import wandb
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -27,26 +28,36 @@ datagen = ImageDataGenerator(
 datagen = ImageDataGenerator(
     preprocessing_function=1. / 255,
 )
-train_generator = datagen.flow_from_directory(
-    wandb.config.DATASET_DIR + "/train",
-    target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
-    batch_size=wandb.config.BATCH_SIZE,
-    class_mode="categorical",
-)
 
-validation_generator = datagen.flow_from_directory(
-    wandb.config.DATASET_DIR + "/train",
-    target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
-    batch_size=wandb.config.BATCH_SIZE,
-    class_mode="categorical",
-)
 
-test_generator = datagen.flow_from_directory(
-    wandb.config.DATASET_DIR + "/test",
-    target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
-    batch_size=wandb.config.BATCH_SIZE,
-    class_mode="categorical",
-)
+def get_data_train():
+    train_generator = datagen.flow_from_directory(
+        wandb.config.DATASET_DIR + "/train",
+        target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
+        batch_size=wandb.config.BATCH_SIZE,
+        class_mode="categorical",
+    )
+    return train_generator
+
+
+def get_data_validation():
+    validation_generator = datagen.flow_from_directory(
+        wandb.config.DATASET_DIR + "/train",
+        target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
+        batch_size=wandb.config.BATCH_SIZE,
+        class_mode="categorical",
+    )
+    return validation_generator
+
+
+def get_data_test():
+    test_generator = datagen.flow_from_directory(
+        wandb.config.DATASET_DIR + "/test",
+        target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
+        batch_size=wandb.config.BATCH_SIZE,
+    )
+    return test_generator
+
 
 def sweep(args):
     sweep_config = {
@@ -58,15 +69,15 @@ def sweep(args):
                 'experiment_name': {'value': args.experiment_name},
                 'MODEL_FNAME': {'value': args.MODEL_FNAME},
                 'DATASET_DIR': {'value': args.DATASET_DIR},
-                'LEARNING_RATE': {'values': args.LEARNING_RATE},
+                'LEARNING_RATE': {'value': args.LEARNING_RATE},
                 'EPOCHS': {'value': args.EPOCHS},
-                'BATCH_SIZE': {'values': args.BATCH_SIZE},
-                'OPTIMIZER': {'values': args.OPTIMIZER},
+                'BATCH_SIZE': {'value': args.BATCH_SIZE},
+                'OPTIMIZER': {'value': args.OPTIMIZER},
                 'LOSS': {'value': args.LOSS},
                 'IMG_WIDTH': {'value': args.IMG_WIDTH},
                 'IMG_HEIGHT': {'value': args.IMG_HEIGHT},
-                'DROPOUT': {'values': args.DROPOUT},
-                'WEIGHT_DECAY': {'values': args.WEIGHT_DECAY},
+                'DROPOUT': {'value': args.DROPOUT},
+                'WEIGHT_DECAY': {'value': args.WEIGHT_DECAY},
                 'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES}
             }
     }

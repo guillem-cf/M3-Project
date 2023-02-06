@@ -1,11 +1,9 @@
-import wandb
 import tensorflow as tf
-
+import wandb
 from wandb.keras import WandbCallback
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-
 from model import MyModel
-from utils import save_plots, train_generator, test_generator, validation_generator
+from utils import save_plots, get_data_train, get_data_validation, get_data_test, sweep
 
 import argparse
 
@@ -16,7 +14,8 @@ for gpu in gpus:
 
 
 def train(args):
-    model = MyModel(name=args.experiment_name, input_shape=(224, 224, 3))
+    model = MyModel(name=args.experiment_name, filters=32, kernel_size=3, strides=1, pool_size=2,
+                    dropout=wandb.config.DROPOUT, non_linearities="relu")
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
     reduce_lr = ReduceLROnPlateau(
@@ -27,65 +26,21 @@ def train(args):
     mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
 
-    model.compile(loss="categorical_crossentropy", optimizer=get_optimizer(wandb.config.OPTIMIZER),
+    model.compile(loss="categorical_crossentropy", optimizer=wandb.config.OPTIMIZER,
                   metrics=["accuracy"])
 
     history = model.fit(
-        train_generator,
+        get_data_train,
         steps_per_epoch=(int(400 // wandb.config.BATCH_SIZE) + 1),
         epochs=wandb.config.EPOCHS,
-        validation_data=validation_generator,
+        validation_data=get_data_validation,
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
         callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
         use_multiprocessing=True,
         workers=8
     )
-    result = model.evaluate(test_generator)
+    result = model.evaluate(get_data_test)
     print(result)
     print(history.history.keys())
     save_plots(history, args)
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="./MIT_split")
-    parser.add_argument(
-        "--MODEL_FNAME", type=str, default="./model/full_image/mlp", help="Model path"
-    )
-    parser.add_argument(
-        "--WEIGHTS_FNAME",
-        type=str,
-        default="./weights/full_image/mlp",
-        help="Weights path",
-    )
-    # parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
-    parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=32)
-    parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=20)
-    parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.001)
-    parser.add_argument("--MOMENTUM", type=float, help="Indicate Momentum", default=0.9)
-    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0)
-    parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.0001)
-    parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="sgd")
-    parser.add_argument(
-        "--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy"
-    )
-    parser.add_argument("--IMG_WIDTH", type=int, help="Indicate Image Size", default=224)
-    parser.add_argument("--IMG_HEIGHT", type=int, help="Indicate Image Size", default=224)
-    # parser.add_argument("--MODEL", type=int, help="Indicate the model to use", default=1)
-    parser.add_argument("--experiment_name", type=str, help="Experiment name", default="baseline")
-    parser.add_argument(
-        "--VALIDATION_SAMPLES",
-        type=int,
-        help="Number of validation samples",
-        default=807,
-    )
-    parser.add_argument("--horizontal_flip", type=bool, help="Horizontal Flip", default=False)
-    parser.add_argument("--vertical_flip", type=bool, help="Vertical Flip", default=False)
-    parser.add_argument("--rotation", type=int, help="Rotation", default=0)
-    parser.add_argument("--width_shift", type=float, help="Width Shift", default=0.0)
-    parser.add_argument("--height_shift", type=float, help="Height Shift", default=0.0)
-    parser.add_argument("--shear_range", type=float, help="Shear Range", default=0.0)
-    parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
-
-    args = parser.parse_args()
-    wandb.init(project=args.experiment_name)
+    wandb.agent(sweep_id, function=train)
