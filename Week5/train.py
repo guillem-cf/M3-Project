@@ -4,8 +4,10 @@ from wandb.keras import WandbCallback
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from model import MyModel
 from utils import save_plots, get_data_train, get_data_validation, get_data_test, sweep
+import matplotlib
 
-import argparse
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))
 gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -30,17 +32,14 @@ def train(args):
                   metrics=["accuracy"])
 
     history = model.fit(
-        get_data_train,
+        get_data_train(),
         steps_per_epoch=(int(400 // wandb.config.BATCH_SIZE) + 1),
         epochs=wandb.config.EPOCHS,
-        validation_data=get_data_validation,
+        validation_data=get_data_validation(),
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
         callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
-        use_multiprocessing=True,
-        workers=8
     )
-    result = model.evaluate(get_data_test)
+    result = model.evaluate(get_data_test())
     print(result)
     print(history.history.keys())
     save_plots(history, args)
-    wandb.agent(sweep_id, function=train)

@@ -1,7 +1,7 @@
 import argparse
 import wandb
 from utils import sweep
-from baseline import train
+from train import train
 def main():
     parser = argparse.ArgumentParser(
         description="MIT", formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -44,10 +44,11 @@ def main():
     parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
 
     args = parser.parse_args()
-    wandb.init(project=args.experiment_name)
     sweep_config = sweep(args)
     sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
-    wandb.agent(sweep_id, function=train)
+    wandb.init(project="M3_W5")
+    wandb.config.update(args)
+    wandb.agent(sweep_id, function=train(args))
 
 if __name__ == "__main__":
     main()
