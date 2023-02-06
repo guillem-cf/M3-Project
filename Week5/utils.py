@@ -23,7 +23,7 @@ datagen = ImageDataGenerator(
     channel_shift_range=0.0,
     fill_mode="nearest",
     cval=0.0,
-    horizontal_flip=wandb.config.data_augmentation_HF,
+    horizontal_flip=True,
     vertical_flip=False,
     rescale=None,
 )
