@@ -1,18 +1,17 @@
 import argparse
 import pickle as pkl
-import pandas as pd
 
 import matplotlib
+import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
 
-from utils import *
 from BOVW import svm
+from utils import *
 
 matplotlib.use("Agg")
 import numpy as np
 from PIL import Image
-
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 gpus = tf.config.experimental.list_physical_devices('GPU')

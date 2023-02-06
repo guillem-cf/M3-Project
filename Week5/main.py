@@ -1,7 +1,9 @@
 import argparse
+
 import wandb
-from utils import sweep
+
 from train import train
+from utils import sweep
 
 
 def main():
@@ -48,7 +50,7 @@ def main():
     args = parser.parse_args()
     sweep_config = sweep(args)
     sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
-    wandb.init(project="M3_W5",name=args.experiment_name)
+    wandb.init(project="M3_W5", name=args.experiment_name)
     wandb.config.update(args)
     wandb.agent(sweep_id, function=train(args), count=1)
 

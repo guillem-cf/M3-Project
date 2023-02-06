@@ -42,7 +42,7 @@ def train(args):
                                                        batch_size=args.BATCH_SIZE,
                                                        class_mode='categorical')
 
-    #base_model = DenseNet121(include_top=True, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
+    # base_model = DenseNet121(include_top=True, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model = DenseNet121(include_top=False, weights='imagenet', input_shape=(args.IMG_WIDTH, args.IMG_HEIGHT, 3))
     base_model.summary()
     # plot_model(base_model, to_file='./images/modelDenseNet121_Top.png', show_shapes=True, show_layer_names=True)
@@ -57,19 +57,18 @@ def train(args):
     This is different from flattening the feature maps, which would concatenate all the values of the feature maps in a 1-D array.
     """
 
-    if (args.REMOVE_BLOCK == 1): #trainable a false
-        #x = base_model.get_layer('pool4_pool').output  # -1 block + -1 transient
+    if (args.REMOVE_BLOCK == 1):  # trainable a false
+        # x = base_model.get_layer('pool4_pool').output  # -1 block + -1 transient
         x = base_model.get_layer('pool4_conv').output  # -1 block + -1 transient
-    if (args.REMOVE_BLOCK == 2): #trainable a false
+    if (args.REMOVE_BLOCK == 2):  # trainable a false
         x = base_model.get_layer('pool3_pool').output  # -2 block + -2 transient
-    if (args.REMOVE_BLOCK == 3): #trainable a false
+    if (args.REMOVE_BLOCK == 3):  # trainable a false
         x = base_model.get_layer('pool2_pool').output  # -3 block + -3 transient
 
-    
-    #else: # posar trainable a true llavors
-       # x = base_model.layers[-2].output
+    # else: # posar trainable a true llavors
+    # x = base_model.layers[-2].output
 
-    #base_model.get_layer('avg_pool').trainable = True
+    # base_model.get_layer('avg_pool').trainable = True
 
     """if args.MODEL_HID is not None:
         for layer in args.MODEL_HID:
@@ -79,7 +78,7 @@ def train(args):
     x = Dense(1024, activation='relu')(x)
     x = Dense(8, activation='softmax', name='predictionsProf')(x)
 
-    #model = Model(inputs=base_model.input, outputs=output)
+    # model = Model(inputs=base_model.input, outputs=output)
     model = Model(inputs=base_model.input, outputs=x)
     for layer in model.layers:
         print(layer.name, layer.trainable)
@@ -106,7 +105,7 @@ def train(args):
                         validation_data=validation_generator,
                         validation_steps=(
                                 int(args.VALIDATION_SAMPLES // args.BATCH_SIZE) + 1),
-                        callbacks=[WandbCallback(),es, mc1, mc2])
+                        callbacks=[WandbCallback(), es, mc1, mc2])
     # callbacks=[es, mc, mc_2, reduce_lr, WandbCallback()])
     # https://www.tensorflow.org/api_docs/python/tensorflow/keras/callbacks/ReduceLROnPlateau
     # https://keras.io/api/callbacks/model_checkpoint/

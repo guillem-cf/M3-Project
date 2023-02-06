@@ -1,16 +1,17 @@
-import numpy as np
-
-import wandb
 import matplotlib
+import numpy as np
+import wandb
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+
 def preprocess_input(image):
     image = image / 255.0
     image = np.array(image)
     return image
+
 
 """
 datagen = ImageDataGenerator(
