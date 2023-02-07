@@ -23,9 +23,9 @@ def train(args):
                show_shapes=True, show_layer_names=True)
     model.summary()
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=15)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
     reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=10, min_lr=1e-6)
+        monitor='val_loss', factor=0.2, patience=15, min_lr=1e-6)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)

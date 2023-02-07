@@ -8,28 +8,20 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
-def preprocess_input(image):
-    image = image / 255.0
-    image = np.array(image)
-    return image
-
-
 datagen = ImageDataGenerator(
-    featurewise_center=False,
-    samplewise_center=False,
-    featurewise_std_normalization=False,
-    samplewise_std_normalization=False,
-    preprocessing_function=preprocess_input,
+    rotation_range=40,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
     zoom_range=0.2,
     channel_shift_range=0.0,
     fill_mode="nearest",
     cval=0.0,
     horizontal_flip=True,
     vertical_flip=False,
-    rescale=None,
+    rescale=1. / 255,
 )
-
-
+datagen_test = ImageDataGenerator(rescale=1. / 255)
 def get_data_train():
     train_generator = datagen.flow_from_directory(
         wandb.config.DATASET_DIR + "/train",
@@ -51,7 +43,7 @@ def get_data_validation():
 
 
 def get_data_test():
-    test_generator = datagen.flow_from_directory(
+    test_generator = datagen_test.flow_from_directory(
         wandb.config.DATASET_DIR + "/test",
         target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
         batch_size=wandb.config.BATCH_SIZE,
