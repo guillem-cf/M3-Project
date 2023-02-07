@@ -15,9 +15,9 @@ def preprocess_input(image):
 
 
 datagen = ImageDataGenerator(
-    featurewise_center=True,
+    featurewise_center=False,
     samplewise_center=False,
-    featurewise_std_normalization=True,
+    featurewise_std_normalization=False,
     samplewise_std_normalization=False,
     preprocessing_function=preprocess_input,
     zoom_range=0.2,
@@ -79,7 +79,7 @@ def sweep(args):
                 'DROPOUT': {'value': args.DROPOUT},
                 'WEIGHT_DECAY': {'value': args.WEIGHT_DECAY},
                 'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-                'data_augmentation_HF': {'values': True},
+                'data_augmentation_HF': {'value': True},
                 'data_augmentation_Z': {'value': 0.2}
             }
     }
