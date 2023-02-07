@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 datagen = ImageDataGenerator(
-    rotation_range=40,
+    rotation_range=10,
     width_shift_range=0.2,
     height_shift_range=0.2,
     shear_range=0.2,

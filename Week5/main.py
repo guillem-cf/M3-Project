@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=200)
     parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.0001)
     parser.add_argument("--MOMENTUM", type=float, help="Indicate Momentum", default=0.9)
-    parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.3)
+    parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.0001)
     parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="adam")
     parser.add_argument("--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy")
     parser.add_argument("--IMG_WIDTH", type=int, help="Indicate Image Size", default=224)
@@ -50,7 +50,7 @@ def main():
     parser.add_argument('--kernel_size', nargs='+', type=int, help='kernel_size', default=[5, 3])
     parser.add_argument('--strides', type=int, help='stride', default=1)
     parser.add_argument('--pool_size', type=int, help='pool size', default=2)
-    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.2)
+    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.3)
 
     args = parser.parse_args()
     wandb.init(project="M3_W5", name=args.experiment_name)
