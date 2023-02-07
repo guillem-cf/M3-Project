@@ -22,10 +22,10 @@ def main():
     )
     # parser.add_argument("--PATCH_SIZE", type=int, help="Indicate Patch Size", default=64)
     parser.add_argument("--BATCH_SIZE", type=int, help="Indicate Batch Size", default=32)
-    parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=20)
-    parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.001)
+    parser.add_argument("--EPOCHS", type=int, help="Indicate Epochs", default=100)
+    parser.add_argument("--LEARNING_RATE", type=float, help="Indicate Learning Rate", default=0.0001)
     parser.add_argument("--MOMENTUM", type=float, help="Indicate Momentum", default=0.9)
-    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0)
+    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.2)
     parser.add_argument("--WEIGHT_DECAY", type=float, help="Indicate Weight Decay", default=0.0001)
     parser.add_argument("--OPTIMIZER", type=str, help="Indicate Optimizer", default="adam")
     parser.add_argument("--LOSS", type=str, help="Indicate Loss", default="categorical_crossentropy")
@@ -47,6 +47,11 @@ def main():
     parser.add_argument("--shear_range", type=float, help="Shear Range", default=0.0)
     parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
 
+    parser.add_argument('--filters', nargs='+', type=int, help='filters', default=[64, 32])
+    parser.add_argument('--kernel_size', nargs='+', type=int, help='kernel_size', default=[5, 3])
+    parser.add_argument('--strides', type=int, help='stride', default=1)
+    parser.add_argument('--pool_size', type=int, help='pool size', default=2)
+
     args = parser.parse_args()
     wandb.init(project="M3_W5", name=args.experiment_name)
     wandb.config.update(args)
@@ -57,3 +62,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    wandb.finish()

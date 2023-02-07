@@ -54,23 +54,49 @@ def MyModel(name, filters, kernel_size, strides, pool_size, dropout_rate, non_li
     #     tf.keras.layers.Dense(8, activation=softmax)
     # ])
 
+    """ 0.72 val accuracy
     Sequential = tf.keras.Sequential([
-        tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl, input_shape=(224, 224, 3)),
-        tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl),
+        tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl, input_shape=(224, 224, 3)),
+        tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl),
         tf.keras.layers.MaxPool2D(pool_size=pool_size),
-        tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl),
-        tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl),
+        tf.keras.layers.Conv2D(filters[1], kernel_size[1], strides, padding="same", activation=nl),
+        tf.keras.layers.Conv2D(filters[1], kernel_size[1], strides, padding="same", activation=nl),
         tf.keras.layers.MaxPool2D(pool_size=pool_size),
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(dropout_rate),
        
-        tf.keras.layers.Flatten(),
+        tf.keras.layers.GlobalAveragePooling2D(),
+        tf.keras.layers.Dense(512, activation='relu'),
+        tf.keras.layers.Dropout(dropout_rate),
+        tf.keras.layers.Dense(256, activation='relu'),
+        tf.keras.layers.Dropout(dropout_rate),
+        tf.keras.layers.Dense(64, activation='relu'),
         #tf.keras.layers.GlobalAveragePooling2D(),
         #tf.keras.layers.Dense(128, activation ='relu'),
         
         tf.keras.layers.Dense(8, activation ='softmax')
     ])
+    """
+    Sequential = tf.keras.Sequential([
+        tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl,
+                               input_shape=(224, 224, 3)),
+        tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl),
+        tf.keras.layers.MaxPool2D(pool_size=pool_size),
+        tf.keras.layers.Conv2D(filters[1], kernel_size[1], strides, padding="same", activation=nl),
+        tf.keras.layers.Conv2D(filters[1], kernel_size[1], strides, padding="same", activation=nl),
+        tf.keras.layers.MaxPool2D(pool_size=pool_size),
+        tf.keras.layers.BatchNormalization(),
 
+        tf.keras.layers.GlobalAveragePooling2D(),
+        tf.keras.layers.Dropout(dropout_rate),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(512, activation='relu'),
+        tf.keras.layers.Dropout(dropout_rate),
+        tf.keras.layers.Dense(256, activation='relu'),
+        # tf.keras.layers.GlobalAveragePooling2D(),
+        # tf.keras.layers.Dense(128, activation ='relu'),
+
+        tf.keras.layers.Dense(8, activation='softmax')
+    ])
 
     return Sequential
 

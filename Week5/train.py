@@ -16,9 +16,10 @@ for gpu in gpus:
 
 
 def train(args):
-    model = MyModel(name=args.experiment_name, filters=32, kernel_size=3, strides=1, pool_size=2,
+    model = MyModel(name=args.experiment_name, filters=args.filters, kernel_size=args.kernel_size, strides=args.strides,
+                    pool_size=args.pool_size,
                     dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
-    plot_model(model, to_file='./images/model_'+ args.experiment_name + '.png',
+    plot_model(model, to_file='./images/model_' + args.experiment_name + '.png',
                show_shapes=True, show_layer_names=True)
     model.summary()
     # defining the early stop criteria

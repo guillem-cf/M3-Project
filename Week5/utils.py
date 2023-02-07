@@ -80,7 +80,7 @@ def sweep(args):
                 'WEIGHT_DECAY': {'value': args.WEIGHT_DECAY},
                 'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
                 'data_augmentation_HF': {'value': True},
-                'data_augmentation_Z': {'value': 0.2}
+                'data_augmentation_Z': {'value': 0.2},
             }
     }
     return sweep_config
