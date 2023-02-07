@@ -1,5 +1,6 @@
 import matplotlib
 import numpy as np
+import tensorflow as tf
 import wandb
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -110,3 +111,27 @@ def save_plots(history, args):
         'val_acc': history.history["val_accuracy"],
         'val_loss': history.history["val_loss"]
     })
+
+def get_optimizer(optimizer="adam"):
+    "Select optmizer between adam and sgd with momentum"
+    if optimizer.lower() == "adam":
+        return tf.keras.optimizers.Adam(learning_rate=wandb.config.LEARNING_RATE,
+                                        weight_decay=wandb.config.WEIGHT_DECAY)
+    if optimizer.lower() == "sgd":
+        return tf.keras.optimizers.SGD(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM,
+                                       weight_decay=wandb.config.WEIGHT_DECAY)
+    if optimizer.lower() == "rmsprop":
+        return tf.keras.optimizers.RMSprop(learning_rate=wandb.config.LEARNING_RATE, momentum=wandb.config.MOMENTUM,
+                                           weight_decay=wandb.config.WEIGHT_DECAY)
+    if optimizer.lower() == "adagrad":
+        return tf.keras.optimizers.Adagrad(learning_rate=wandb.config.LEARNING_RATE,
+                                           weight_decay=wandb.config.WEIGHT_DECAY)
+    if optimizer.lower() == "adadelta":
+        return tf.keras.optimizers.Adadelta(learning_rate=wandb.config.LEARNING_RATE,
+                                            weight_decay=wandb.config.WEIGHT_DECAY)
+    if optimizer.lower() == "adamax":
+        return tf.keras.optimizers.Adamax(learning_rate=wandb.config.LEARNING_RATE,
+                                          weight_decay=wandb.config.WEIGHT_DECAY)
+    if optimizer.lower() == "nadam":
+        return tf.keras.optimizers.Nadam(learning_rate=wandb.config.LEARNING_RATE,
+                                         weight_decay=wandb.config.WEIGHT_DECAY)

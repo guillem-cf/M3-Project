@@ -5,7 +5,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, Re
 from tensorflow.keras.utils import plot_model
 from wandb.keras import WandbCallback
 from model import MyModel
-from utils import save_plots, get_data_train, get_data_validation, get_data_test
+from utils import save_plots, get_data_train, get_data_validation, get_data_test, get_optimizer
 
 matplotlib.use("Agg")
 
@@ -30,8 +30,8 @@ def train(args):
                           monitor='val_loss', mode='min', save_best_only=True)
     mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
-
-    model.compile(loss="categorical_crossentropy", optimizer=wandb.config.OPTIMIZER,
+    optimizer = get_optimizer(wandb.config.OPTIMIZER)
+    model.compile(loss="categorical_crossentropy", optimizer=optimizer,
                   metrics=["accuracy"])
 
     history = model.fit(
