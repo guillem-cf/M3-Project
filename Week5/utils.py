@@ -12,7 +12,6 @@ datagen = ImageDataGenerator(
     rotation_range=10,
     width_shift_range=0.2,
     height_shift_range=0.2,
-    shear_range=0.2,
     zoom_range=0.2,
     channel_shift_range=0.0,
     fill_mode="nearest",
@@ -20,7 +19,9 @@ datagen = ImageDataGenerator(
     horizontal_flip=True,
     vertical_flip=False,
     rescale=1. / 255,
+    brightness_range=[0.1, 1.5],
 )
+
 datagen_test = ImageDataGenerator(rescale=1. / 255)
 def get_data_train():
     train_generator = datagen.flow_from_directory(
