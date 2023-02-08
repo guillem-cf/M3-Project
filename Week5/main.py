@@ -1,5 +1,5 @@
 import argparse
-
+import functools
 import wandb
 
 from train import train
@@ -12,6 +12,8 @@ def main():
     parser.add_argument("--experiment_name", type=str, help="Experiment name", default="baseline")
     parser.add_argument("--MODEL", type=str, help="Indicate the model to use", default="mlp")
     parser.add_argument("--DATASET_DIR", type=str, help="Dataset path", default="/ghome/group07/M3-Project-new/Week4/MIT_small_train_1")
+    parser.add_argument("--VALIDATION_SAMPLES", type=int, help="Indicate Validation Samples", default=807)
+    parser.add_argument("--CALLBACKS", type=bool, help="Image callbacks", default=False)
 
     parser.add_argument("--IMG_WIDTH", type=int, help="Indicate Image Size", default=256)  # abans 224
     parser.add_argument("--IMG_HEIGHT", type=int, help="Indicate Image Size", default=256) # abans 224
@@ -53,6 +55,8 @@ def main():
                 'experiment_name': {'value': args.experiment_name},
                 'MODEL': {'value': args.MODEL},
                 'DATASET_DIR': {'value': args.DATASET_DIR},
+                'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
+                'CALLBACKS': {'value': args.CALLBACKS},
 
                 'IMG_WIDTH': {'value': args.IMG_WIDTH},
                 'IMG_HEIGHT': {'value': args.IMG_HEIGHT},
@@ -82,7 +86,7 @@ def main():
     }
 
     sweep_id = wandb.sweep(sweep=sweep_config, project="M3_W5")
-    wandb.agent(sweep_id, function=train(args), count=1)
+    wandb.agent(sweep_id, function=functools.partial(train, args), count=1)
 
 if __name__ == "__main__":
     main()

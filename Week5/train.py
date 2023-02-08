@@ -16,9 +16,12 @@ for gpu in gpus:
 
 
 def train(args):
-    wandb.init(name=args.experiment_name)
+    wandb.init(project=args.experiment_name)
+    
+    # Print wandb.config
+    print(wandb.config)
 
-    model = MyModel(name=wandb.config.MODEL, filters=wandb.config.filters, kernel_size=wandb.config.kernel_size, strides=wandb.config.strides,
+    model = MyModel(name=args.MODEL, filters=wandb.config.filters, kernel_size=wandb.config.kernel_size, strides=wandb.config.strides,
                     pool_size=wandb.config.pool_size,
                     dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
     plot_model(model, to_file='./images/model_' + wandb.config.experiment_name + '.png',
@@ -37,9 +40,13 @@ def train(args):
     optimizer = get_optimizer(wandb.config.OPTIMIZER)
     model.compile(loss="categorical_crossentropy", optimizer=optimizer,
                   metrics=["accuracy"])
-
-    wandb_callback = WandbCallback(input_type="images", labels=["coast", "forest", "highway", "inside_city", "mountain", "Opencountry", "street", "tallbuilding"],
+    
+    if wandb.config.CALLBACKS:
+        wandb_callback = WandbCallback(input_type="images", labels=["coast", "forest", "highway", "inside_city", "mountain", "Opencountry", "street", "tallbuilding"],
                                    output_type="label", training_data=get_data_train(), validation_data=get_data_validation(), log_weights=True, log_gradients=True, log_evaluation=True, log_batch_frequency=10)
+    else:
+        wandb_callback = WandbCallback()
+        
     history = model.fit(
         get_data_train(),
         steps_per_epoch=(int(400 // wandb.config.BATCH_SIZE) + 1),

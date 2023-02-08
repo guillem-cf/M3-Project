@@ -59,7 +59,7 @@ def MyModel(name, filters, kernel_size, strides, pool_size, dropout_rate, non_li
         Sequential = tf.keras.Sequential([
             # First convolutional block --> input (256, 256, 3) --> output (128, 128, 32)
             tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl,
-                                input_shape=(256, 256, 3)),
+                                input_shape=(224, 224, 3)),
             tf.keras.layers.MaxPool2D(pool_size=pool_size),
             # Second convolutional block  --> input (128, 128, 32) --> output (64, 64, 64)
             tf.keras.layers.Conv2D(filters[1], kernel_size[1], strides, padding="same", activation=nl),
@@ -139,6 +139,7 @@ def MyModel(name, filters, kernel_size, strides, pool_size, dropout_rate, non_li
 
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dense(512),
+            tf.keras.layers.Dense(64, activation='relu'),
             tf.keras.layers.BatchNormalization(),
             tf.keras.layers.Activation('relu'),
             tf.keras.layers.Dropout(0.5),
