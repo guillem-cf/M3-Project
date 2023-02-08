@@ -14,4 +14,10 @@ conda activate m3
 
 #python main.py --experiment_name baseline1.2 --EPOCHS 30 # adding 1 conv layer + 1 dense after flatten
 
-python main.py --experiment_name baseline3_BN_D --EPOCHS 30 
+# python main.py --experiment_name baseline3_BN_D --EPOCHS 30 
+
+# python main.py --experiment_name Olorente --horizontal_flip=True --zoom_range 0.2 --IMG_WIDTH 32 --IMG_HEIGHT 32 # Corrected the height and width of images to 256
+# python main.py --experiment_name baseline_8_corrected --horizontal_flip=True --zoom_range 0.2              # Olorente's model
+# python main.py --experiment_name baseline_8_lowcost_1 --horizontal_flip=True --zoom_range 0.2  # Low cost model 1
+
+python main.py --experiment_name medium_extended --MODEL medium_extended --IMG_WIDTH 64 --IMG_HEIGHT 64 

@@ -16,32 +16,37 @@ for gpu in gpus:
 
 
 def train(args):
-    model = MyModel(name=args.experiment_name, filters=args.filters, kernel_size=args.kernel_size, strides=args.strides,
-                    pool_size=args.pool_size,
+    wandb.init(name=args.experiment_name)
+
+    model = MyModel(name=wandb.config.MODEL, filters=wandb.config.filters, kernel_size=wandb.config.kernel_size, strides=wandb.config.strides,
+                    pool_size=wandb.config.pool_size,
                     dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
-    plot_model(model, to_file='./images/model_' + args.experiment_name + '.png',
+    plot_model(model, to_file='./images/model_' + wandb.config.experiment_name + '.png',
                show_shapes=True, show_layer_names=True)
     model.summary()
+
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=30)
     reduce_lr = ReduceLROnPlateau(
         monitor='val_loss', factor=0.2, patience=15, min_lr=1e-6)
     # saving the best model based on val_loss
-    mc1 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
+    mc1 = ModelCheckpoint('./checkpoint/best_' + wandb.config.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)
-    mc2 = ModelCheckpoint('./checkpoint/best_' + args.experiment_name + '_model_checkpoint' + '.h5',
+    mc2 = ModelCheckpoint('./checkpoint/best_' + wandb.config.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_accuracy', mode='max', save_best_only=True)
     optimizer = get_optimizer(wandb.config.OPTIMIZER)
     model.compile(loss="categorical_crossentropy", optimizer=optimizer,
                   metrics=["accuracy"])
 
+    wandb_callback = WandbCallback(input_type="images", labels=["coast", "forest", "highway", "inside_city", "mountain", "Opencountry", "street", "tallbuilding"],
+                                   output_type="label", training_data=get_data_train(), validation_data=get_data_validation(), log_weights=True, log_gradients=True, log_evaluation=True, log_batch_frequency=10)
     history = model.fit(
         get_data_train(),
         steps_per_epoch=(int(400 // wandb.config.BATCH_SIZE) + 1),
         epochs=wandb.config.EPOCHS,
         validation_data=get_data_validation(),
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
-        callbacks=[WandbCallback(), mc1, mc2, es, reduce_lr],
+        callbacks=[wandb_callback, mc1, mc2, es, reduce_lr]
     )
     result = model.evaluate(get_data_test())
     print(result)

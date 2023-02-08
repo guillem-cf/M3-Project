@@ -8,22 +8,19 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
-datagen = ImageDataGenerator(
-    rotation_range=10,
-    width_shift_range=0.2,
-    height_shift_range=0.2,
-    zoom_range=0.2,
-    channel_shift_range=0.0,
-    fill_mode="nearest",
-    cval=0.0,
-    horizontal_flip=True,
-    vertical_flip=False,
-    rescale=1. / 255,
-    brightness_range=[0.1, 1.5],
-)
 
-datagen_test = ImageDataGenerator(rescale=1. / 255)
 def get_data_train():
+    datagen = ImageDataGenerator(
+        # preprocessing_function=preprocess_input,
+        rotation_range=wandb.config.rotation,
+        width_shift_range=wandb.config.width_shift,
+        height_shift_range=wandb.config.height_shift,
+        shear_range=wandb.config.shear_range,
+        zoom_range=wandb.config.zoom_range,
+        horizontal_flip=wandb.config.horizontal_flip,
+        vertical_flip=wandb.config.vertical_flip,
+        rescale=1. / 255
+    )
     train_generator = datagen.flow_from_directory(
         wandb.config.DATASET_DIR + "/train",
         target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
@@ -34,6 +31,17 @@ def get_data_train():
 
 
 def get_data_validation():
+    datagen = ImageDataGenerator(
+        # preprocessing_function=preprocess_input,
+        rotation_range=wandb.config.rotation,
+        width_shift_range=wandb.config.width_shift,
+        height_shift_range=wandb.config.height_shift,
+        shear_range=wandb.config.shear_range,
+        zoom_range=wandb.config.zoom_range,
+        horizontal_flip=wandb.config.horizontal_flip,
+        vertical_flip=wandb.config.vertical_flip,
+        rescale=1. / 255
+    )
     validation_generator = datagen.flow_from_directory(
         wandb.config.DATASET_DIR + "/test",
         target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
@@ -44,6 +52,7 @@ def get_data_validation():
 
 
 def get_data_test():
+    datagen_test = ImageDataGenerator(rescale=1. / 255)
     test_generator = datagen_test.flow_from_directory(
         wandb.config.DATASET_DIR + "/test",
         target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
@@ -51,32 +60,6 @@ def get_data_test():
     )
     return test_generator
 
-
-def sweep(args):
-    sweep_config = {
-        'method': 'random',
-        'name': 'Sweep_' + args.experiment_name,
-        'metric': {'goal': 'maximize', 'name': 'val_accuracy'},
-        'parameters':
-            {
-                'experiment_name': {'value': args.experiment_name},
-                'MODEL_FNAME': {'value': args.MODEL_FNAME},
-                'DATASET_DIR': {'value': args.DATASET_DIR},
-                'LEARNING_RATE': {'value': args.LEARNING_RATE},
-                'EPOCHS': {'value': args.EPOCHS},
-                'BATCH_SIZE': {'value': args.BATCH_SIZE},
-                'OPTIMIZER': {'value': args.OPTIMIZER},
-                'LOSS': {'value': args.LOSS},
-                'IMG_WIDTH': {'value': args.IMG_WIDTH},
-                'IMG_HEIGHT': {'value': args.IMG_HEIGHT},
-                'DROPOUT': {'value': args.DROPOUT},
-                'WEIGHT_DECAY': {'value': args.WEIGHT_DECAY},
-                'VALIDATION_SAMPLES': {'value': args.VALIDATION_SAMPLES},
-                'data_augmentation_HF': {'value': True},
-                'data_augmentation_Z': {'value': 0.2},
-            }
-    }
-    return sweep_config
 
 
 def save_plots(history, args):
