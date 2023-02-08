@@ -61,20 +61,22 @@ def MyModel(name, filters, kernel_size, strides, pool_size, dropout_rate, non_li
             tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl,
                                 input_shape=(224, 224, 3)),
             tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.Dropout(dropout_rate),
             # Second convolutional block  --> input (128, 128, 32) --> output (64, 64, 64)
             tf.keras.layers.Conv2D(filters[1], kernel_size[1], strides, padding="same", activation=nl),
             tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.Dropout(dropout_rate),
             # Third convolutional block  --> input (64, 64, 64) --> output (32, 32, 128)
             tf.keras.layers.Conv2D(filters[2], kernel_size[1], strides, padding="same", activation=nl),
             tf.keras.layers.Conv2D(filters[2], kernel_size[1], strides, padding="same", activation=nl),
             tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.Dropout(dropout_rate),
             # Batch normalization layer --> input (32, 32, 128) --> output (32, 32, 128)
-            tf.keras.layers.BatchNormalization(),
             # Flatten and feed to output layer
             tf.keras.layers.GlobalAveragePooling2D(),
-            tf.keras.layers.Dropout(dropout_rate),
             # Feed the network to the fully connected layers
             tf.keras.layers.Dense(1024, activation='relu'),
+            tf.keras.layers.Dropout(dropout_rate),
             tf.keras.layers.Dense(512, activation='relu'),
             tf.keras.layers.Dense(64, activation='relu'),
             # Classification layer

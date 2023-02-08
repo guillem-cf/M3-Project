@@ -53,7 +53,7 @@ def train(args):
         epochs=wandb.config.EPOCHS,
         validation_data=get_data_validation(),
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
-        callbacks=[wandb_callback, mc1, mc2, es, reduce_lr]
+        callbacks=[wandb_callback, mc1, mc2, es, reduce_lr], workers=8
     )
     result = model.evaluate(get_data_test())
     print(result)

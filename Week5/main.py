@@ -30,7 +30,7 @@ def main():
     parser.add_argument('--kernel_size', nargs='+', type=int, help='kernel_size', default=[5, 3])
     parser.add_argument('--strides', type=int, help='stride', default=1)
     parser.add_argument('--pool_size', type=int, help='pool size', default=2)
-    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.3)
+    parser.add_argument("--DROPOUT", type=float, help="Indicate Dropout", default=0.2)
 
     parser.add_argument("--horizontal_flip", type=bool, help="Horizontal Flip", default=False)
     parser.add_argument("--vertical_flip", type=bool, help="Vertical Flip", default=False)
