@@ -10,7 +10,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 def blur(img):
-    return cv2.blur(img, (5, 5))
+    return np.array(cv2.GaussianBlur(img, (5, 5), 1.0))
 
 
 def get_data_train():
