@@ -23,15 +23,15 @@ def train(args):
 
     model = MyModel(name=args.MODEL, filters=wandb.config.filters, kernel_size=wandb.config.kernel_size, strides=wandb.config.strides,
                     pool_size=wandb.config.pool_size,
-                    dropout_rate=wandb.config.DROPOUT, non_linearities="relu")
+                    dropout_rate=wandb.config.DROPOUT, non_linearities=wandb.config.NON_LINEARITY)
     plot_model(model, to_file='./images/model_' + wandb.config.experiment_name + '.png',
                show_shapes=True, show_layer_names=True)
     model.summary()
 
     # defining the early stop criteria
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=30)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
     reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=15, min_lr=1e-6)
+        monitor='val_loss', factor=0.2, patience=20, min_lr=1e-6)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + wandb.config.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)
@@ -53,7 +53,7 @@ def train(args):
         epochs=wandb.config.EPOCHS,
         validation_data=get_data_validation(),
         validation_steps=(int(wandb.config.VALIDATION_SAMPLES // wandb.config.BATCH_SIZE) + 1),
-        callbacks=[wandb_callback, mc1, mc2, es, reduce_lr], workers=8
+        callbacks=[wandb_callback, mc1, mc2, es, reduce_lr], workers=24
     )
     result = model.evaluate(get_data_test())
     print(result)
