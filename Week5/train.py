@@ -31,7 +31,7 @@ def train(args):
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
     reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=20, min_lr=1e-6)
+        monitor='val_loss', factor=0.2, patience=20, min_lr=1e-8)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + wandb.config.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)

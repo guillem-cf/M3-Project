@@ -5,25 +5,36 @@ import wandb
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import cv2
 
-
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
 
 def blur(img):
     return np.array(cv2.GaussianBlur(img, (5, 5), 1.0))
 
 
 def get_data_train():
+    # datagen = ImageDataGenerator(
+    #     rotation_range=wandb.config.rotation,
+    #     width_shift_range=wandb.config.width_shift,
+    #     height_shift_range=wandb.config.height_shift,
+    #     shear_range=wandb.config.shear_range,
+    #     zoom_range=wandb.config.zoom_range,
+    #     horizontal_flip=wandb.config.horizontal_flip,
+    #     vertical_flip=wandb.config.vertical_flip,
+    #     brightness_range=wandb.config.brightness_range,
+    #     rescale=1. / 255
+    # )
+
     datagen = ImageDataGenerator(
-        preprocessing_function=blur,
-        rotation_range=wandb.config.rotation,
-        width_shift_range=wandb.config.width_shift,
-        height_shift_range=wandb.config.height_shift,
-        shear_range=wandb.config.shear_range,
-        zoom_range=wandb.config.zoom_range,
-        horizontal_flip=wandb.config.horizontal_flip,
-        vertical_flip=wandb.config.vertical_flip,
-        brightness_range=wandb.config.brightness_range,
+        rotation_range=15,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        shear_range=0.1,
+        zoom_range=0.1,
+        horizontal_flip=True,
+        vertical_flip=False,
+        fill_mode="nearest",
         rescale=1. / 255
     )
     train_generator = datagen.flow_from_directory(
@@ -68,7 +79,6 @@ def get_data_test():
     return test_generator
 
 
-
 def save_plots(history, args):
     # summarize history for accuracy
     plt.plot(history.history["accuracy"])
@@ -94,6 +104,7 @@ def save_plots(history, args):
         'val_acc': history.history["val_accuracy"],
         'val_loss': history.history["val_loss"]
     })
+
 
 def get_optimizer(optimizer="adam"):
     "Select optmizer between adam and sgd with momentum"
