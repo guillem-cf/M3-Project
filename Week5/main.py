@@ -39,6 +39,8 @@ def main():
     parser.add_argument("--height_shift", type=float, help="Height Shift", default=0.0)
     parser.add_argument("--shear_range", type=float, help="Shear Range", default=0.0)
     parser.add_argument("--zoom_range", type=float, help="Zoom Range", default=0.0)
+    parser.add_argument("--brightness_range", nargs='+', type=float, help="Brightness Range", default=[0.2,0.8])
+    parser.add_argument("--reescaling", type=float, help="Reescaling", default=1.0/255.0)
     
     args = parser.parse_args()
 
@@ -81,7 +83,8 @@ def main():
                 'width_shift':{'value':args.width_shift},           # {'values': [0, 0.2]},  # {'max': 0.20, 'min': 0.0, 'type': 'double'},
                 'height_shift':{'value':args.height_shift},         # {'values': [0, 0.2]}  # {'max': 0.20, 'min': 0.0, 'type': 'double'}
                 'shear_range':{'value':args.shear_range},           # {'values': [0, 0.2]},  # {'max': 0.20, 'min': 0.0, 'type': 'double'},
-                'zoom_range':{'value':args.zoom_range},             # {'values': [0, 0.2]},  # {'max': 20, 'min': 0, 'type': 'int'},   
+                'zoom_range':{'value':args.zoom_range},             # {'values': [0, 0.2]},  # {'max': 20, 'min': 0, 'type': 'int'},  
+                'brightness_range':{'value':args.brightness_range}  # {'values': [0, 0.2]},  # {'max': 0.20, 'min': 0.0, 'type': 'double'} 
             }
     }
 
