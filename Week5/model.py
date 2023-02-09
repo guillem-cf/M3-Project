@@ -59,7 +59,7 @@ def MyModel(name, filters, kernel_size, strides, pool_size, dropout_rate, non_li
         Sequential = tf.keras.Sequential([
             # First convolutional block --> input (256, 256, 3) --> output (128, 128, 32)
             tf.keras.layers.Conv2D(filters[0], kernel_size[1], strides, padding="same", activation=nl,
-                                input_shape=(224, 224, 3)),
+                                input_shape=(256, 256, 3)),
             tf.keras.layers.MaxPool2D(pool_size=pool_size),
             tf.keras.layers.Dropout(dropout_rate),
             # Second convolutional block  --> input (128, 128, 32) --> output (64, 64, 64)
