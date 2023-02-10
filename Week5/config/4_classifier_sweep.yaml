@@ -1,4 +1,4 @@
-name: '3_2_lr_sweep'
+name: '4_classifier_sweep'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: '3_2_lr_sweep'
+    value: '4_classifier_sweep'
   MODEL:
     value: 'best_model_sweep'
   num_params:
@@ -30,7 +30,7 @@ parameters:
   CLR_LEARNING_RATE:
     value: False
   LEARNING_RATE:
-    values: [0.01, 0.005, 0.001]
+    value: 0.001  # millor lr value
   INIT_LR:
     value: None
   MAX_LR:
@@ -40,7 +40,7 @@ parameters:
   WEIGHT_DECAY:
     value: 0.0001
   OPTIMIZER:
-    values: ['adam', 'sgd']
+    value: 'adam'   # millor optimizer value
   LOSS:
     value: 'categorical_crossentropy'
 
@@ -49,9 +49,9 @@ parameters:
   second_layer:
     value: True
   num_denses:
-    value: 4
+    values: [4, 3]
   dim_dense:
-    value: 512
+    values: [512, 1024, 256, 128]
   filters1:
     value: 64
   filters2:
@@ -61,7 +61,7 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    value: 0.3
+    values: [0.3, 0.2]
   kernel_size:
     value: 3
   strides:  

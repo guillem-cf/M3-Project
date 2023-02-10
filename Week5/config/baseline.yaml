@@ -42,6 +42,8 @@ parameters:
     value: True
   num_denses:
     value: 3
+  dim_dense:
+    value: 512
   filters1:
     value: 64
   filters2:
@@ -59,7 +61,7 @@ parameters:
   initializer:
     value: 'HeUniform'
   non_linearities:
-    values: 'leaky_relu'
+    value: 'leaky_relu'
   pool_size:
     value: 2
 

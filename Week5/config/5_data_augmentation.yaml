@@ -1,4 +1,4 @@
-name: '3_2_lr_sweep'
+name: '5_data_augmentation'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: '3_2_lr_sweep'
+    value: '5_data_augmentation'
   MODEL:
     value: 'best_model_sweep'
   num_params:
@@ -30,7 +30,7 @@ parameters:
   CLR_LEARNING_RATE:
     value: False
   LEARNING_RATE:
-    values: [0.01, 0.005, 0.001]
+    value: 0.001  # millor lr value
   INIT_LR:
     value: None
   MAX_LR:
@@ -40,7 +40,7 @@ parameters:
   WEIGHT_DECAY:
     value: 0.0001
   OPTIMIZER:
-    values: ['adam', 'sgd']
+    value: 'adam'   # millor optimizer value
   LOSS:
     value: 'categorical_crossentropy'
 
@@ -48,10 +48,10 @@ parameters:
     value: 4
   second_layer:
     value: True
-  num_denses:
-    value: 4
+  num_denses: 
+    value: 3    # millor num_denses value
   dim_dense:
-    value: 512
+    value: 512   # millor dim_dense value
   filters1:
     value: 64
   filters2:
@@ -61,7 +61,7 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    value: 0.3
+    value: 0.2   # millor dropout_range value
   kernel_size:
     value: 3
   strides:  
@@ -75,21 +75,21 @@ parameters:
 
 
   hardcore_data_augmentation:
-    value: True
+    value: False
   horizontal_flip:
     value: True
   vertical_flip:
     value: False
   rotation:
-    value: 15
+    values: [15, 0]
   width_shift:
-    value: 0.1
+    values: [0.1, 0]
   height_shift:
-    value: 0.1
+    values: [0.1, 0]
   shear_range:
-    value: 0.1
+    values: [0.1, 0]
   zoom_range:
-    value: 0.1
+    values: [0.1, 0.2]
   brightness_range:
-    value: [0.5, 1.5]
+    value: [0.2, 1.0]
 

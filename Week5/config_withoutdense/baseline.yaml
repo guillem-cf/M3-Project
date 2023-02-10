@@ -1,4 +1,4 @@
-name: '3_2_lr_sweep'
+name: 'baseline'
 
 method: 'grid'
 
@@ -8,9 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: '3_2_lr_sweep'
+    value: 'baseline'
   MODEL:
-    value: 'best_model_sweep'
+    value: 'withoutdense_sweep'
   num_params:
     value: 0
   DATASET_DIR:
@@ -30,7 +30,7 @@ parameters:
   CLR_LEARNING_RATE:
     value: False
   LEARNING_RATE:
-    values: [0.01, 0.005, 0.001]
+    value: 0.001  # millor lr value
   INIT_LR:
     value: None
   MAX_LR:
@@ -40,28 +40,29 @@ parameters:
   WEIGHT_DECAY:
     value: 0.0001
   OPTIMIZER:
-    values: ['adam', 'sgd']
+    value: 'adam'   # millor optimizer value
   LOSS:
     value: 'categorical_crossentropy'
 
   num_blocks:
-    value: 4
+    # values: [[[3,2,2,1],[3,2,2],[3,3,2],[1,2,3],[2,2,2],[]]]
+    value: [2,2,3]
   second_layer:
-    value: True
-  num_denses:
-    value: 4
+    value: None
+  num_denses: 
+    value: None    # millor num_denses value
   dim_dense:
-    value: 512
+    value: None   # millor dim_dense value
   filters1:
-    value: 64
+    value: None
   filters2:
-    value: 64
+    value: None
   batch_norm: 
     value: True
   dropout:
     value: True
   dropout_range:
-    value: 0.3
+    value: 0.5   # millor dropout_range value
   kernel_size:
     value: 3
   strides:  
@@ -75,7 +76,7 @@ parameters:
 
 
   hardcore_data_augmentation:
-    value: True
+    value: False
   horizontal_flip:
     value: True
   vertical_flip:
@@ -91,5 +92,5 @@ parameters:
   zoom_range:
     value: 0.1
   brightness_range:
-    value: [0.5, 1.5]
+    value: [0.2, 1.0]
 
