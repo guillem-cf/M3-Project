@@ -180,6 +180,7 @@ def MyModel(name,
                                               input_shape=(img_dim, img_dim, 3)))
         if second_layer:
             Sequential.add(tf.keras.layers.Conv2D(filters1, kernel_size, strides, padding="same", activation=non_linearities,
+                                                kernel_regularizer=regularizers.l2(1e-4),
                                                 kernel_initializer=initializer))
         Sequential.add(tf.keras.layers.MaxPool2D(pool_size=pool_size))
         if batch_norm:
@@ -188,9 +189,11 @@ def MyModel(name,
         if num_blocks > 1:
             # Second convolutional block  --> input (128, 128, 32) --> output (64, 64, 64)
             Sequential.add(tf.keras.layers.Conv2D(filters2, kernel_size, strides, padding="same", activation=non_linearities,
+                                                   kernel_regularizer=regularizers.l2(1e-4),
                                                    kernel_initializer=initializer))
             if second_layer:
                 Sequential.add(tf.keras.layers.Conv2D(filters2, kernel_size, strides, padding="same", activation=non_linearities,
+                                                  kernel_regularizer=regularizers.l2(1e-4),
                                                   kernel_initializer=initializer))
             Sequential.add(tf.keras.layers.MaxPool2D(pool_size=pool_size))
             if batch_norm:
@@ -199,9 +202,11 @@ def MyModel(name,
         if num_blocks > 2:
             # Third convolutional block 
             Sequential.add(tf.keras.layers.Conv2D(128, kernel_size, strides, padding="same", activation=non_linearities,
+                                                    kernel_regularizer=regularizers.l2(1e-4),
                                                     kernel_initializer=initializer))
             if second_layer:
                 Sequential.add(tf.keras.layers.Conv2D(128, kernel_size, strides, padding="same", activation=non_linearities,
+                                                    kernel_regularizer=regularizers.l2(1e-4),
                                                     kernel_initializer=initializer))
             Sequential.add(tf.keras.layers.MaxPool2D(pool_size=pool_size))
             if batch_norm:
@@ -210,9 +215,11 @@ def MyModel(name,
         if num_blocks > 3:
             # Fourth convolutional block
             Sequential.add(tf.keras.layers.Conv2D(256, kernel_size, strides, padding="same", activation=non_linearities,
+                                                    kernel_regularizer=regularizers.l2(1e-4),
                                                     kernel_initializer=initializer))
             if second_layer:
                 Sequential.add(tf.keras.layers.Conv2D(256, kernel_size, strides, padding="same", activation=non_linearities,
+                                                    kernel_regularizer=regularizers.l2(1e-4),
                                                     kernel_initializer=initializer))
             Sequential.add(tf.keras.layers.MaxPool2D(pool_size=pool_size))
             if batch_norm:
@@ -221,10 +228,12 @@ def MyModel(name,
         if num_blocks > 4:
             # Fourth convolutional block
             Sequential.add(tf.keras.layers.Conv2D(512, kernel_size, strides, padding="same", activation=non_linearities,
-                                                kernel_initializer=initializer))
+                                                    kernel_regularizer=regularizers.l2(1e-4),
+                                                    kernel_initializer=initializer))
             if second_layer:
                 Sequential.add(tf.keras.layers.Conv2D(512, kernel_size, strides, padding="same", activation=non_linearities,
-                                                kernel_initializer=initializer))
+                                                    kernel_regularizer=regularizers.l2(1e-4),
+                                                    kernel_initializer=initializer))
             Sequential.add(tf.keras.layers.MaxPool2D(pool_size=pool_size))
             if batch_norm:
                 Sequential.add(tf.keras.layers.BatchNormalization())
@@ -234,37 +243,47 @@ def MyModel(name,
 
 
         if num_denses == 4:
-            Sequential.add(tf.keras.layers.Dense(dim_dense, activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(dim_dense, activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.4))
-            Sequential.add(tf.keras.layers.Dense(int(dim_dense //2), activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(int(dim_dense //2), activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.3))
-            Sequential.add(tf.keras.layers.Dense(int(dim_dense //4), activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(int(dim_dense //4), activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.2))
-            Sequential.add(tf.keras.layers.Dense(int(dim_dense //8), activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(int(dim_dense //8), activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range))
         if num_denses == 3:
-            Sequential.add(tf.keras.layers.Dense(dim_dense, activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(dim_dense, activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.3))
-            Sequential.add(tf.keras.layers.Dense(int(dim_dense //2), activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(int(dim_dense //2), activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.2))
-            Sequential.add(tf.keras.layers.Dense(int(dim_dense //8), activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(int(dim_dense //8), activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range))
         if num_denses == 2:
-            Sequential.add(tf.keras.layers.Dense(128, activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(128, activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.3))
-            Sequential.add(tf.keras.layers.Dense(64, activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(64, activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range))
         if num_denses == 1:
-            Sequential.add(tf.keras.layers.Dense(64, activation=non_linearities, kernel_initializer=initializer))
+            Sequential.add(tf.keras.layers.Dense(64, activation=non_linearities, 
+                            kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
                 Sequential.add(tf.keras.layers.Dropout(dropout_range))
 
@@ -298,7 +317,7 @@ def MyModel(name,
             x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
             filters *= 2
 
-        x = tf.keras.layers.Dropout(0.5)(x)
+        x = tf.keras.layers.Dropout(dropout_range)(x)
         x = conv2d(8, kernel_size=1, padding='valid')(x)
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
         x = tf.keras.layers.Activation('softmax')(x)

@@ -1,4 +1,4 @@
-name: '1WD_network'
+name: '2WD_network_activation'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: '1WD_network'
+    value: '2WD_network_activation'
   MODEL:
     value: 'withoutdense_sweep'
   num_params:
@@ -45,7 +45,7 @@ parameters:
     value: 'categorical_crossentropy'
 
   num_blocks:
-    values: [[3,2,2],[3,3,2],[3,3,3],[2,3,3],[3,2,3],[2,3,2],[2,2,3]]
+    values: [[3,2,2],[2,3,2],[2,2,3]]
     # value: [2,2,3]
   second_layer:
     value: None
@@ -62,21 +62,21 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    value: 0.5   # millor dropout_range value
+    values: [0.3, 0.5]   # millor dropout_range value
   kernel_size:
-    value: 3
+    values: [3, 5]
   strides:  
     value: 1
   initializer:
-    value: 'HeUniform'
+    values: ['HeUniform', 'GlorotUniform']
   non_linearities:
-    value: 'mish'
+    values: ['mish', 'leaky_relu', 'relu']
   pool_size:
     value: 2
 
 
   hardcore_data_augmentation:
-    value: False
+    value:  True
   horizontal_flip:
     value: True
   vertical_flip:

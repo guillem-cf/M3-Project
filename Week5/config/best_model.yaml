@@ -1,4 +1,4 @@
-name: 'best_model'
+name: 'best_model_with_regularization'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'best_model'
+    value: 'best_model_with_regularization'
   MODEL:
     value: 'best_model_sweep'
   DATASET_DIR:
@@ -41,7 +41,9 @@ parameters:
   second_layer:
     value: True
   num_denses:
-    value: 4      # Canvia aqui respecte la baseline
+    value: 3      # Canvia aqui respecte la baseline
+  dim_dense:
+    value: 512    
   filters1:
     value: 64
   filters2:
@@ -51,7 +53,7 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    value: 0.3
+    value: 0.2
   kernel_size:
     value: 3
   strides:  
@@ -59,27 +61,27 @@ parameters:
   initializer:
     value: 'HeUniform'
   non_linearities:
-    values: 'leaky_relu'
+    value: 'mish'
   pool_size:
     value: 2
 
 
   hardcore_data_augmentation:
-    value: True
+    value: False
   horizontal_flip:
     value: True
   vertical_flip:
     value: False
   rotation:
-    value: 15
+    value: 0
   width_shift:
     value: 0.1
   height_shift:
     value: 0.1
   shear_range:
-    value: 0.1
+    value: 0
   zoom_range:
-    value: 0.1
+    value: 0
   brightness_range:
     value: [0.5, 1.5]
 
