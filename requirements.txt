@@ -13,3 +13,4 @@ ruff
 ipywidgets
 notebook
 jupyterlab
+tensorflow_addons>=0.15.0

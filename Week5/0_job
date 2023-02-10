@@ -20,4 +20,6 @@ conda activate m3
 # python main.py --experiment_name baseline_8_corrected --horizontal_flip=True --zoom_range 0.2              # Olorente's model
 # python main.py --experiment_name baseline_8_lowcost_1 --horizontal_flip=True --zoom_range 0.2  # Low cost model 1
 
-python main.py --experiment_name Olorente --MODEL Olorente --IMG_WIDTH 64 --IMG_HEIGHT 64 
+# python main.py --experiment_name Olorente --MODEL Olorente --IMG_WIDTH 64 --IMG_HEIGHT 64
+
+python main.py --config config/best_model.yaml

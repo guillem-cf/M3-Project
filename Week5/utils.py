@@ -14,29 +14,31 @@ def blur(img):
 
 
 def get_data_train():
-    # datagen = ImageDataGenerator(
-    #     rotation_range=wandb.config.rotation,
-    #     width_shift_range=wandb.config.width_shift,
-    #     height_shift_range=wandb.config.height_shift,
-    #     shear_range=wandb.config.shear_range,
-    #     zoom_range=wandb.config.zoom_range,
-    #     horizontal_flip=wandb.config.horizontal_flip,
-    #     vertical_flip=wandb.config.vertical_flip,
-    #     brightness_range=wandb.config.brightness_range,
-    #     rescale=1. / 255
-    # )
+    if wandb.config.hardcore_data_augmentation:
+        datagen = ImageDataGenerator(
+            rotation_range=15,
+            width_shift_range=0.1,
+            height_shift_range=0.1,
+            shear_range=0.1,
+            zoom_range=0.1,
+            horizontal_flip=True,
+            vertical_flip=False,
+            fill_mode="nearest",
+            rescale=1. / 255
+        )
+    else:
+        datagen = ImageDataGenerator(
+            rotation_range=wandb.config.rotation,
+            width_shift_range=wandb.config.width_shift,
+            height_shift_range=wandb.config.height_shift,
+            shear_range=wandb.config.shear_range,
+            zoom_range=wandb.config.zoom_range,
+            horizontal_flip=wandb.config.horizontal_flip,
+            vertical_flip=wandb.config.vertical_flip,
+            brightness_range=wandb.config.brightness_range,
+            rescale=1. / 255
+            )
 
-    datagen = ImageDataGenerator(
-        rotation_range=15,
-        width_shift_range=0.1,
-        height_shift_range=0.1,
-        shear_range=0.1,
-        zoom_range=0.1,
-        horizontal_flip=True,
-        vertical_flip=False,
-        fill_mode="nearest",
-        rescale=1. / 255
-    )
     train_generator = datagen.flow_from_directory(
         wandb.config.DATASET_DIR + "/train",
         target_size=(wandb.config.IMG_WIDTH, wandb.config.IMG_HEIGHT),
@@ -47,18 +49,6 @@ def get_data_train():
 
 
 def get_data_validation():
-    # datagen = ImageDataGenerator(
-    #     preprocessing_function=blur,
-    #     rotation_range=wandb.config.rotation,
-    #     width_shift_range=wandb.config.width_shift,
-    #     height_shift_range=wandb.config.height_shift,
-    #     shear_range=wandb.config.shear_range,
-    #     zoom_range=wandb.config.zoom_range,
-    #     horizontal_flip=wandb.config.horizontal_flip,
-    #     vertical_flip=wandb.config.vertical_flip,
-    #     brightness_range=wandb.config.brightness_range,
-    #     rescale=1. / 255
-    # )
     datagen = ImageDataGenerator(rescale=1. / 255)
     validation_generator = datagen.flow_from_directory(
         wandb.config.DATASET_DIR + "/test",
@@ -129,3 +119,4 @@ def get_optimizer(optimizer="adam"):
     if optimizer.lower() == "nadam":
         return tf.keras.optimizers.Nadam(learning_rate=wandb.config.LEARNING_RATE,
                                          weight_decay=wandb.config.WEIGHT_DECAY)
+

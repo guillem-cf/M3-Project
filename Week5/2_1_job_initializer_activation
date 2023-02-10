@@ -19,7 +19,7 @@ conda activate m3
 # python main.py --experiment_name medium_extended_HF_Z_R --MODEL medium_extended --IMG_WIDTH 64 --IMG_HEIGHT 64 --horizontal_flip True --zoom_range 0.2 --rotation 10  # job 8074
 
 
-python main.py --experiment_name basic5_HF_Z_R20_blur --MODEL basic5 --IMG_WIDTH 64 --IMG_HEIGHT 64 --horizontal_flip True --zoom_range 0.2 --rotation 20
+python main.py --config config/2_initializer_activation_kernel.yaml
 
 
 
