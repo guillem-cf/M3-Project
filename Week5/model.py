@@ -25,6 +25,7 @@ def MyModel(name,
             img_dim,
             num_blocks,
             second_layer,
+            third_layer,
             num_denses,
             dim_dense,
             filters1,
@@ -38,23 +39,6 @@ def MyModel(name,
             initializer,
             pool_size):
 
-    # class Mish(Activation):
-    #     '''
-    #     Mish Activation Function.
-    #     .. math::
-    #         mish(x) = x * tanh(softplus(x)) = x * tanh(ln(1 + e^{x}))
-    #     Shape:
-    #         - Input: Arbitrary. Use the keyword argument `input_shape`
-    #         (tuple of integers, does not include the samples axis)
-    #         when using this layer as the first layer in a model.
-    #         - Output: Same shape as the input.
-    #     Examples:
-    #         >>> X = Activation('Mish', name="conv1_act")(X_input)
-    #     '''
-
-    #     def __init__(self, activation, **kwargs):
-    #         super(Mish, self).__init__(activation, **kwargs)
-    #         self.__name__ = 'Mish'
 
     # def mish(x):
     #     return x * tf.math.tanh(tf.math.softplus(x))
@@ -87,44 +71,6 @@ def MyModel(name,
 
     
 
-    # nl = _nl[non_linearities]
-    # Sequential = tf.keras.Sequential([
-    #     tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl, input_shape=(224, 224, 3)),
-    #     tf.keras.layers.MaxPool2D(pool_size=pool_size),
-    #     tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl),
-    #     tf.keras.layers.MaxPool2D(pool_size=pool_size),
-    #     tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl),
-    #     tf.keras.layers.MaxPool2D(pool_size=pool_size),
-    #     tf.keras.layers.Conv2D(filters, kernel_size, strides, padding="same", activation=nl),
-    #     tf.keras.layers.MaxPool2D(pool_size=pool_size),
-    #     tf.keras.layers.Flatten(),
-    #     tf.keras.layers.Dense(256, activation=nl),
-    #     tf.keras.layers.Dropout(dropout_rate),
-    #     tf.keras.layers.Dense(8, activation=softmax)
-    # ])
-
-    """ 0.72 val accuracy
-    Sequential = tf.keras.Sequential([
-        tf.keras.layers.Conv2D(32, 3, strides, padding="same", activation=nl, input_shape=(224, 224, 3)),
-        tf.keras.layers.Conv2D(32, 3, strides, padding="same", activation=nl),
-        tf.keras.layers.MaxPool2D(pool_size=pool_size),
-        tf.keras.layers.Conv2D(64, 3, strides, padding="same", activation=nl),
-        tf.keras.layers.Conv2D(64, 3, strides, padding="same", activation=nl),
-        tf.keras.layers.MaxPool2D(pool_size=pool_size),
-        tf.keras.layers.BatchNormalization(),
-       
-        tf.keras.layers.GlobalAveragePooling2D(),
-        tf.keras.layers.Dense(512, activation='relu'),
-        tf.keras.layers.Dropout(dropout_rate),
-        tf.keras.layers.Dense(256, activation='relu'),
-        tf.keras.layers.Dropout(dropout_rate),
-        tf.keras.layers.Dense(64, activation='relu'),
-        #tf.keras.layers.GlobalAveragePooling2D(),
-        #tf.keras.layers.Dense(128, activation ='relu'),
-        
-        tf.keras.layers.Dense(8, activation ='softmax')
-    ])
-    """
     if name == "baseline_8_corrected":
         # Model BO (JOHNNY)
         Sequential = tf.keras.Sequential([
@@ -221,6 +167,10 @@ def MyModel(name,
                 Sequential.add(tf.keras.layers.Conv2D(256, kernel_size, strides, padding="same", activation=non_linearities,
                                                     kernel_regularizer=regularizers.l2(1e-4),
                                                     kernel_initializer=initializer))
+                if third_layer:
+                    Sequential.add(tf.keras.layers.Conv2D(256, kernel_size, strides, padding="same", activation=non_linearities,
+                                                    kernel_regularizer=regularizers.l2(1e-4),
+                                                    kernel_initializer=initializer))
             Sequential.add(tf.keras.layers.MaxPool2D(pool_size=pool_size))
             if batch_norm:
                 Sequential.add(tf.keras.layers.BatchNormalization())
@@ -241,7 +191,7 @@ def MyModel(name,
 
         Sequential.add(tf.keras.layers.GlobalAveragePooling2D())
 
-
+        
         if num_denses == 4:
             Sequential.add(tf.keras.layers.Dense(dim_dense, activation=non_linearities, 
                             kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
@@ -263,15 +213,15 @@ def MyModel(name,
             Sequential.add(tf.keras.layers.Dense(dim_dense, activation=non_linearities, 
                             kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
-                Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.3))
+                Sequential.add(tf.keras.layers.Dropout(dropout_range[0]))
             Sequential.add(tf.keras.layers.Dense(int(dim_dense //2), activation=non_linearities, 
                             kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
-                Sequential.add(tf.keras.layers.Dropout(dropout_range + 0.2))
+                Sequential.add(tf.keras.layers.Dropout(dropout_range[1]))
             Sequential.add(tf.keras.layers.Dense(int(dim_dense //8), activation=non_linearities, 
                             kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
             if dropout:
-                Sequential.add(tf.keras.layers.Dropout(dropout_range))
+                Sequential.add(tf.keras.layers.Dropout(dropout_range[2]))
         if num_denses == 2:
             Sequential.add(tf.keras.layers.Dense(128, activation=non_linearities, 
                             kernel_initializer=initializer, kernel_regularizer=regularizers.l2(1e-4)))
@@ -288,6 +238,7 @@ def MyModel(name,
                 Sequential.add(tf.keras.layers.Dropout(dropout_range))
 
         Sequential.add(tf.keras.layers.Dense(8, activation='softmax', kernel_initializer=initializer))
+
 
     elif name == "withoutdense_sweep":
         def conv2d(filters, kernel_size, padding='same', strides=1):
@@ -326,6 +277,63 @@ def MyModel(name,
 
         Sequential = tf.keras.Model(inputs=inputs, outputs=x)
     
+    elif name == "residual_connections1":
+        input = tf.keras.Input(shape=(64, 64, 3))
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(input)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b1_out = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(b1_out)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b2_out = tf.keras.layers.BatchNormalization()(x)
+        res_1 = tf.keras.layers.Add()([b1_out, b2_out])
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(res_1)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b3_out = tf.keras.layers.BatchNormalization()(x)
+        res_2 = tf.keras.layers.Add()([res_1, b3_out])
+        x = tf.keras.layers.GlobalAveragePooling2D()(res_2)
+        # Feed the network to the fully connected layers
+        x = tf.keras.layers.Dense(256, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.6)(x)
+        x = tf.keras.layers.Dense(128, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.5)(x)
+        x = tf.keras.layers.Dense(64, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        output = tf.keras.layers.Dense(8, activation='softmax', kernel_initializer=initializer)(x)
+
+        Sequential = tf.keras.Model(inputs=input, outputs=output)
+
+    elif name == "residual_connections2":
+        input = tf.keras.Input(shape=(64, 64, 3))
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(input)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b1_out = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(b1_out)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b2_out = tf.keras.layers.BatchNormalization()(x)
+        res_1 = tf.keras.layers.Add()([b1_out, b2_out])
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(res_1)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b3_out = tf.keras.layers.BatchNormalization()(x)
+        res_2 = tf.keras.layers.Add()([b1_out, b2_out, b3_out])
+        x = tf.keras.layers.GlobalAveragePooling2D()(res_2)
+        # Feed the network to the fully connected layers
+        x = tf.keras.layers.Dense(256, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.6)(x)
+        x = tf.keras.layers.Dense(128, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.5)(x)
+        x = tf.keras.layers.Dense(64, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        output = tf.keras.layers.Dense(8, activation='softmax', kernel_initializer=initializer)(x)
+
+        Sequential = tf.keras.Model(inputs=input, outputs=output)
+
+
 
     elif name == "medium_extended":  # val acc 0.59.. sense data augmentation
         Sequential = tf.keras.Sequential([

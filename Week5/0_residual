@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH -n 4 # Number of cores
+#SBATCH --mem 2000 # 2GB solicitados.
+#SBATCH -p mhigh,mhigh # or mlow Partition to submit to master low prioriy queue
+#SBATCH --gres gpu:1 # Para pedir Pascales MAX 8
+#SBATCH -o %x_%u_%j.out # File to which STDOUT will be written
+#SBATCH -e %x_%u_%j.err # File to which STDERR will be written
+
+eval "$(conda shell.bash hook)"
+conda activate m3
+#python w4code_example_backup_profe.py
+#python main.py --experiment_name baseline1 # with flatten
+#python main.py --experiment_name baseline1.1_BN_D --EPOCHS 50 # adding 1 conv layer
+
+#python main.py --experiment_name baseline1.2 --EPOCHS 30 # adding 1 conv layer + 1 dense after flatten
+
+# python main.py --experiment_name baseline3_BN_D --EPOCHS 30 
+
+# python main.py --experiment_name Olorente --horizontal_flip=True --zoom_range 0.2 --IMG_WIDTH 32 --IMG_HEIGHT 32 # Corrected the height and width of images to 256
+# python main.py --experiment_name baseline_8_corrected --horizontal_flip=True --zoom_range 0.2              # Olorente's model
+# python main.py --experiment_name baseline_8_lowcost_1 --horizontal_flip=True --zoom_range 0.2  # Low cost model 1
+
+# python main.py --experiment_name Olorente --MODEL Olorente --IMG_WIDTH 64 --IMG_HEIGHT 64
+
+python main.py --config config/prova_residual.yaml

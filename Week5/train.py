@@ -38,6 +38,7 @@ def train(args):
                     img_dim = wandb.config.IMG_WIDTH,
                     num_blocks = wandb.config.num_blocks,
                     second_layer = wandb.config.second_layer,
+                    third_layer = wandb.config.third_layer,
                     num_denses = wandb.config.num_denses,
                     dim_dense = wandb.config.dim_dense,
                     filters1 = wandb.config.filters1,

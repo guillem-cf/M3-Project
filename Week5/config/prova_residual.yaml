@@ -1,4 +1,4 @@
-name: 'best_model_with_regularization'
+name: 'residual_sweep'
 
 method: 'grid'
 
@@ -8,9 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'best_model_with_regularization'
+    value: 'residual_sweep'
   MODEL:
-    value: 'best_model_sweep'
+    values: ['residual_connections1', 'residual_connections2']
   DATASET_DIR:
     value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
   VALIDATION_SAMPLES:
@@ -41,7 +41,7 @@ parameters:
   second_layer:
     value: True
   third_layer:
-    values: [True, False]
+    value: False
   num_denses:
     value: 3      # Canvia aqui respecte la baseline
   dim_dense:
@@ -55,15 +55,15 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    values: [[0.6, 0.5, 0.3],[0.7,0.6,0.4], [0.8,0.7,0.5]]
+    value: 0.2
   kernel_size:
     value: 3
   strides:  
     value: 1
   initializer:
-    value: 'glorot_normal'
+    values: ['glorot_normal', 'he_uniform']
   non_linearities:
-    value: 'mish'
+    values: ['mish','leaky_relu','relu']
   pool_size:
     value: 2
 
