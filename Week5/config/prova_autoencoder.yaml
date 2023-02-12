@@ -1,0 +1,91 @@
+name: 'prova_autoencoder'
+
+method: 'grid'
+
+metric:
+  goal: 'maximize'
+  name: 'val_accuracy'
+
+parameters:
+  experiment_name:
+    value: 'prova_autoencoder'
+  MODEL:
+    value: 'resnet'
+  DATASET_DIR:
+    value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
+  VALIDATION_SAMPLES:
+    value: 807
+  CALLBACKS:
+    value: False
+  IMG_WIDTH:
+    value: 64
+  IMG_HEIGHT:
+    value: 64
+  BATCH_SIZE:
+    value: 32
+  EPOCHS:
+    value: 300
+  LEARNING_RATE:
+    value: 0.001
+  MOMENTUM:
+    value: 0.9
+  WEIGHT_DECAY:
+    value: 0.0001
+  OPTIMIZER:
+    value: 'adam'
+  LOSS:
+    value: 'categorical_crossentropy'
+
+  num_blocks:
+    value: 4    # Agafar el millor valor
+  second_layer:
+    value: True # Agafar el millor valor
+  third_layer:
+    value: False
+  num_denses:
+    value: 3    # Agafar el millor valor
+  dim_dense:
+    value: 256  # Agafar el millor valor
+  filters1:
+    value: [16,32,32,64,64,128,128,256]
+  filters2:
+    value: 64
+  batch_norm: 
+    value: True
+  dropout:
+    value: True
+  dropout_range:
+    value: [0.6, 0.5, 0.3]
+  kernel_size:
+    value: 3
+  kernel_regularizer:
+    value: True
+  strides:  
+    value: 1
+  initializer:
+    value: 'glorot_normal'
+  non_linearities:
+    value: 'leaky_relu'
+  pool_size:
+    value: 2
+
+
+  hardcore_data_augmentation:
+    value: True
+  horizontal_flip:
+    value: True
+  vertical_flip:
+    value: False
+  rotation:
+    value: 15
+  width_shift:
+    value: 0.1
+  height_shift:
+    value: 0.1
+  shear_range:
+    value: 0.1
+  zoom_range:
+    value: 0.1
+  brightness_range:
+    value: [0.5, 1.5]
+
