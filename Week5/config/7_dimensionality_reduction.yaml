@@ -63,7 +63,7 @@ parameters:
   strides:  
     value: 1
   initializer:
-    value: 'glorot_normal'
+    value: 'he_uniform'
   non_linearities:
     value: 'leaky_relu'
   pool_size:
