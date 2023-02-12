@@ -1,4 +1,4 @@
-name: 'prova_new_resnet'
+name: 'ResNet'
 
 method: 'grid'
 
@@ -8,9 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'prova_new_resnet'
+    value: 'ResNet'
   MODEL:
-    value: 'resnet'
+    value: 'ResNet'
   DATASET_DIR:
     value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
   VALIDATION_SAMPLES:
@@ -37,25 +37,23 @@ parameters:
     value: 'categorical_crossentropy'
 
   num_blocks:
-    value: 4    # Agafar el millor valor
+    value: 4
   second_layer:
-    value: True # Agafar el millor valor
+    value: True
   third_layer:
     value: False
   num_denses:
-    value: 3    # Agafar el millor valor
+    value: 1     
   dim_dense:
-    value: 256  # Agafar el millor valor
-  filters1:
-    value: [16,32,32,64,64,128,128,256]
-  filters2:
-    value: 64
+    value: 256    
+  filters:
+    value: 32
   batch_norm: 
     value: True
   dropout:
     value: True
   dropout_range:
-    value: [0.6, 0.5, 0.3]
+    value: 0.3
   kernel_size:
     value: 3
   kernel_regularizer:
@@ -65,19 +63,19 @@ parameters:
   initializer:
     value: 'glorot_normal'
   non_linearities:
-    value: 'leaky_relu'
+    value: 'relu'
   pool_size:
     value: 2
 
 
   hardcore_data_augmentation:
-    value: True
+    value: False
   horizontal_flip:
     value: True
   vertical_flip:
     value: False
   rotation:
-    value: 15
+    value: 0
   width_shift:
     value: 0.1
   height_shift:
@@ -85,7 +83,7 @@ parameters:
   shear_range:
     value: 0.1
   zoom_range:
-    value: 0.1
+    value: 0
   brightness_range:
     value: [0.5, 1.5]
 

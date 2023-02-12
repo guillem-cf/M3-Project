@@ -1,4 +1,4 @@
-name: '6_best_model_refining'
+name: 'SeqNet'
 
 method: 'grid'
 
@@ -8,9 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: '6_best_model_refining'
+    value: 'SeqNet'
   MODEL:
-    value: 'best_model_sweep'
+    value: 'SeqNet'
   DATASET_DIR:
     value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
   VALIDATION_SAMPLES:
@@ -22,7 +22,7 @@ parameters:
   IMG_HEIGHT:
     value: 64
   BATCH_SIZE:
-    values: [8, 16,32,64]
+    value: 32
   EPOCHS:
     value: 300
   LEARNING_RATE:
@@ -41,31 +41,29 @@ parameters:
   second_layer:
     value: True
   third_layer:
-    values: [True, False]
+    value: False
   num_denses:
-    value: 3      # Canvia aqui respecte la baseline
+    value: 3      
   dim_dense:
     value: 256    
-  filters1:
-    value: 32
-  filters2:
-    value: 64
+  filters:
+    value: [32,32,64,64,128,128, 256, 256]
   batch_norm: 
     value: True
   dropout:
     value: True
   dropout_range:
-    values: [[0.6, 0.5, 0.3],[0.7,0.6,0.4], [0.8,0.7,0.5]]
+    value: [0.6, 0.5, 0.3]  
   kernel_size:
     value: 3
   kernel_regularizer:
-    values: True
+    value: True
   strides:  
     value: 1
   initializer:
-    value: 'glorot_normal'
+    value: 'he_uniform'
   non_linearities:
-    value: 'mish'
+    value: 'leaky_relu'
   pool_size:
     value: 2
 

@@ -1,4 +1,4 @@
-name: 'dimensionality_reduction'
+name: 'dimensionality_reduction_draw'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'dimensionality_reduction'
+    value: 'dimensionality_reduction_draw'
   MODEL:
     value: 'best_model_sweep'
   DATASET_DIR:
@@ -47,7 +47,7 @@ parameters:
   dim_dense:
     value: 256  # Agafar el millor valor
   filters1:
-    values: [[16,32,32,64,64,128,128,256], [32,32,32,32,64,64,128,128], [32, 16, 64, 32, 128, 64, 256, 128]]
+    value: [32,32,32,32,64,64,128,128]
   filters2:
     value: 64
   batch_norm: 

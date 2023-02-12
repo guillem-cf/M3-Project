@@ -1,4 +1,4 @@
-name: 'baseline'
+name: 'SeqNet-low'
 
 method: 'grid'
 
@@ -8,11 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'baseline'
+    value: 'SeqNet-low'
   MODEL:
-    value: 'withoutdense_sweep'
-  num_params:
-    value: 0
+    value: 'SeqNet'
   DATASET_DIR:
     value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
   VALIDATION_SAMPLES:
@@ -27,50 +25,45 @@ parameters:
     value: 32
   EPOCHS:
     value: 300
-  CLR_LEARNING_RATE:
-    value: False
   LEARNING_RATE:
-    value: 0.001  # millor lr value
-  INIT_LR:
-    value: None
-  MAX_LR:
-    value: None
+    value: 0.001
   MOMENTUM:
     value: 0.9
   WEIGHT_DECAY:
     value: 0.0001
   OPTIMIZER:
-    value: 'adam'   # millor optimizer value
+    value: 'adam'
   LOSS:
     value: 'categorical_crossentropy'
 
   num_blocks:
-    # values: [[[3,2,2,1],[3,2,2],[3,3,2],[1,2,3],[2,2,2],[]]]
-    value: [2,2,3]
+    value: 4
   second_layer:
-    value: None
-  num_denses: 
-    value: None    # millor num_denses value
+    value: True
+  third_layer:
+    value: False
+  num_denses:
+    value: 3     
   dim_dense:
-    value: None   # millor dim_dense value
-  filters1:
-    value: None
-  filters2:
-    value: None
+    value: 256    
+  filters:
+    value: [32,32,32,32,64,64,128,128]
   batch_norm: 
     value: True
   dropout:
     value: True
   dropout_range:
-    value: 0.5   # millor dropout_range value
+    value: [0.6, 0.5, 0.3]   
   kernel_size:
     value: 3
+  kernel_regularizer:
+    value: True
   strides:  
     value: 1
   initializer:
-    value: 'HeUniform'
+    value: 'he_uniform'
   non_linearities:
-    value: 'mish'
+    value: 'leaky_relu'
   pool_size:
     value: 2
 
@@ -82,15 +75,15 @@ parameters:
   vertical_flip:
     value: False
   rotation:
-    value: 15
+    value: 0
   width_shift:
     value: 0.1
   height_shift:
     value: 0.1
   shear_range:
-    value: 0.1
+    value: 0
   zoom_range:
-    value: 0.1
+    value: 0
   brightness_range:
-    value: [0.2, 1.0]
+    value: [0.5, 1.5]
 

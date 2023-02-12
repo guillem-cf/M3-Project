@@ -1,4 +1,4 @@
-name: '2WD_network_activation'
+name: 'residual_4_sweep'
 
 method: 'grid'
 
@@ -8,11 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: '2WD_network_activation'
+    value: 'residual_4_sweep'
   MODEL:
-    value: 'withoutdense_sweep'
-  num_params:
-    value: 0
+    value: 'residual_connections2'
   DATASET_DIR:
     value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
   VALIDATION_SAMPLES:
@@ -27,70 +25,67 @@ parameters:
     value: 32
   EPOCHS:
     value: 300
-  CLR_LEARNING_RATE:
-    value: False
   LEARNING_RATE:
-    value: 0.001  # millor lr value
-  INIT_LR:
-    value: None
-  MAX_LR:
-    value: None
+    value: 0.001
   MOMENTUM:
     value: 0.9
   WEIGHT_DECAY:
     value: 0.0001
   OPTIMIZER:
-    value: 'adam'   # millor optimizer value
+    value: 'adam'
   LOSS:
     value: 'categorical_crossentropy'
 
   num_blocks:
-    values: [[3,2,2],[2,3,2],[2,2,3]]
-    # value: [2,2,3]
+    value: 4
   second_layer:
-    value: None
-  num_denses: 
-    value: None    # millor num_denses value
+    value: True
+  third_layer:
+    value: False
+  num_denses:
+    value: 1     # Canvia aqui respecte la baseline
   dim_dense:
-    value: None   # millor dim_dense value
+    value: 256    
   filters1:
-    value: None
+    value: 32
   filters2:
-    value: None
+    value: 64
   batch_norm: 
     value: True
   dropout:
     value: True
   dropout_range:
-    values: [0.3, 0.5]   # millor dropout_range value
+    value: 0.3
   kernel_size:
-    values: [3, 5]
+    value: 3
+  kernel_regularizer:
+    value: True
   strides:  
     value: 1
   initializer:
-    values: ['HeUniform', 'GlorotUniform']
+    value: 'glorot_normal'
   non_linearities:
-    values: ['mish', 'leaky_relu', 'relu']
+    value: 'relu'
   pool_size:
     value: 2
 
 
   hardcore_data_augmentation:
-    value:  True
+    value: False
   horizontal_flip:
     value: True
   vertical_flip:
     value: False
   rotation:
-    value: 15
+    values: [0, 10]
   width_shift:
-    value: 0.1
+    values: [0, 0.1]
   height_shift:
-    value: 0.1
+    values: [0, 0.1]
   shear_range:
-    value: 0.1
+    values: [0, 0.1]
   zoom_range:
-    value: 0.1
+    values: [0, 0.1]
   brightness_range:
-    value: [0.2, 1.0]
+    value: [0.5, 1.5]
 

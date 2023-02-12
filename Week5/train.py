@@ -8,6 +8,8 @@ from wandb.keras import WandbCallback
 from model import MyModel
 from utils import save_plots, get_data_train, get_data_validation, get_data_test, get_optimizer
 
+import visualkeras
+
 import tensorflow as tf
 
 matplotlib.use("Agg")
@@ -24,7 +26,7 @@ for gpu in gpus:
 
 
 def train(args):
-    wandb.init(project=args.experiment_name)
+    wandb.init()
     
     tf.random.set_seed(42)
     np.random.seed(42)
@@ -41,8 +43,8 @@ def train(args):
                     third_layer = wandb.config.third_layer,
                     num_denses = wandb.config.num_denses,
                     dim_dense = wandb.config.dim_dense,
-                    filters1 = wandb.config.filters1,
-                    filters2=wandb.config.filters2, 
+                    filters1 = wandb.config.filters, 
+                    filters2 = None,
                     batch_norm = wandb.config.batch_norm,
                     dropout = wandb.config.dropout,
                     dropout_range = wandb.config.dropout_range,
@@ -58,6 +60,7 @@ def train(args):
 
     wandb.config.update({"num_params": model.count_params()})
     model.summary()
+    visualkeras.layered_view(model, to_file='./network_draw/' + wandb.config.experiment_name + '.png')
 
     print("Number of parameters: ", wandb.config.num_params)
 
@@ -65,7 +68,7 @@ def train(args):
     # defining the early stop criteria
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
     reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss', factor=0.2, patience=20, mode="auto", min_lr=1e-8)
+        monitor='val_loss', factor=0.5, patience=20, mode="auto", min_lr=1e-8)
     # saving the best model based on val_loss
     mc1 = ModelCheckpoint('./checkpoint/best_' + wandb.config.experiment_name + '_model_checkpoint' + '.h5',
                           monitor='val_loss', mode='min', save_best_only=True)

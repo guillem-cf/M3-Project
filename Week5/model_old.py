@@ -5,6 +5,18 @@ from tensorflow.keras import regularizers
 import tensorflow as tf
 
 
+# _nl = {
+#     "tanh": tanh,
+#     "relu": relu,
+#     "sigmoid": sigmoid,
+#     "elu": elu,
+#     "selu": selu,
+#     "softplus": softplus,
+#     "softsign": softsign,
+#     "leaky_relu": leaky_relu,
+#     "none": lambda x: x,
+# }
+
 
 def MyModel(name,
             img_dim,
@@ -24,11 +36,14 @@ def MyModel(name,
             non_linearities,
             initializer,
             pool_size):
-    
+    # def mish(x):
+    #     return x * tf.math.tanh(tf.math.softplus(x))
+
     # # Define mish using keras backend
     def mish(x):
         return x * K.tanh(K.softplus(x))
 
+    # get_custom_objects().update({'mish': Activation(mish)})
 
     print("Creating model: ", name)
     print("num_blocks: ", num_blocks)
@@ -36,7 +51,8 @@ def MyModel(name,
     print("second_layer: ", second_layer)
     print("third_layer: ", third_layer)
     print("num_denses: ", num_denses)
-    print("filters: ", filters1)
+    print("filters1: ", filters1)
+    print("filters2: ", filters2)
     print("batch_norm: ", batch_norm)
     print("dropout: ", dropout)
     print("dropout_range: ", dropout_range)
@@ -55,8 +71,53 @@ def MyModel(name,
     else:
         kernel_regularizer = None
 
-    
-    if name == "SeqNet":
+    if name == "baseline_8_corrected":
+        # Model BO (JOHNNY)
+        Sequential = tf.keras.Sequential([
+            # First convolutional block --> input (256, 256, 3) --> output (128, 128, 32)
+            tf.keras.layers.Conv2D(64, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform",
+                                   input_shape=(64, 64, 3)),
+            tf.keras.layers.Conv2D(64, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.BatchNormalization(),
+            # Second convolutional block  --> input (128, 128, 32) --> output (64, 64, 64)
+            tf.keras.layers.Conv2D(64, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.Conv2D(64, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.BatchNormalization(),
+
+            tf.keras.layers.Conv2D(128, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.Conv2D(128, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.BatchNormalization(),
+
+            tf.keras.layers.Conv2D(256, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.Conv2D(256, 3, strides, padding="same", activation="leaky_relu",
+                                   kernel_initializer="HeUniform"),
+            tf.keras.layers.MaxPool2D(pool_size=pool_size),
+            tf.keras.layers.BatchNormalization(),
+
+            # Batch normalization layer --> input (32, 32, 128) --> output (32, 32, 128)
+            # Flatten and feed to output layer
+            tf.keras.layers.GlobalAveragePooling2D(),
+            # Feed the network to the fully connected layers
+            tf.keras.layers.Dense(256, activation="leaky_relu", kernel_initializer="HeUniform"),
+            tf.keras.layers.Dropout(0.6),
+            tf.keras.layers.Dense(128, activation="leaky_relu", kernel_initializer="HeUniform"),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(64, activation="leaky_relu", kernel_initializer="HeUniform"),
+            tf.keras.layers.Dropout(0.3),
+            tf.keras.layers.Dense(8, activation='softmax', kernel_initializer="HeUniform")
+        ])
+
+    elif name == "best_model_sweep":
         # Model BO (JOHNNY)
         Sequential = tf.keras.Sequential()
         # First convolutional block --> input (256, 256, 3) --> output (128, 128, 32)
@@ -187,7 +248,73 @@ def MyModel(name,
         Sequential.add(tf.keras.layers.Dense(8, activation='softmax', kernel_initializer=initializer))
 
 
-    elif name == "ResNet":
+    elif name == "withoutdense_sweep":
+        def conv2d(filters, kernel_size, padding='same', strides=1):
+            def f(x):
+                x = tf.keras.layers.Conv2D(filters=filters, kernel_size=kernel_size,
+                                           strides=strides, padding=padding,
+                                           kernel_regularizer=regularizers.l2(1e-4))(x)
+                x = tf.keras.layers.Activation(non_linearities)(x)
+                x = tf.keras.layers.BatchNormalization()(x)
+                return x
+
+            return f
+
+        # Model BO (JOHNNY)
+        # First convolutional block --> input (256, 256, 3) --> output (128, 128, 32)
+        inputs = tf.keras.layers.Input(shape=(img_dim, img_dim, 3))
+
+        initial_filters = 32
+        repetitions = num_blocks
+
+        x = conv2d(initial_filters, kernel_size=3)(inputs)
+        x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
+
+        filters = initial_filters
+        for r in repetitions:
+            for i in range(r):
+                x = conv2d(filters, kernel_size=3)(x)
+            x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
+            filters *= 2
+
+        x = tf.keras.layers.Dropout(dropout_range)(x)
+        x = conv2d(8, kernel_size=1, padding='valid')(x)
+        x = tf.keras.layers.GlobalAveragePooling2D()(x)
+        x = tf.keras.layers.Activation('softmax')(x)
+
+        # x = tf.keras.layers.Dense(8, activation='softmax', kernel_initializer=initializer)(x)
+
+        Sequential = tf.keras.Model(inputs=inputs, outputs=x)
+
+    elif name == "residual_connections1":
+        input = tf.keras.Input(shape=(64, 64, 3))
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(input)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        # x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b1_out = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(b1_out)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        #  x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b2_out = tf.keras.layers.BatchNormalization()(x)
+        res_1 = tf.keras.layers.Add()([b1_out, b2_out])
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(res_1)
+        x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities)(x)
+        #  x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)
+        b3_out = tf.keras.layers.BatchNormalization()(x)
+        res_2 = tf.keras.layers.Add()([res_1, b3_out])
+        x = tf.keras.layers.GlobalAveragePooling2D()(res_2)
+        # Feed the network to the fully connected layers
+        x = tf.keras.layers.Dense(256, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.6)(x)
+        x = tf.keras.layers.Dense(128, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.5)(x)
+        x = tf.keras.layers.Dense(64, activation=non_linearities, kernel_initializer=initializer)(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        output = tf.keras.layers.Dense(8, activation='softmax', kernel_initializer=initializer)(x)
+
+        Sequential = tf.keras.Model(inputs=input, outputs=output)
+
+    elif name == "residual_connections2":
         input = tf.keras.Input(shape=(64, 64, 3))
         x = tf.keras.layers.Conv2D(filters1, (3, 3), padding="same", activation=non_linearities,
                                    kernel_initializer=initializer)(input)
@@ -241,6 +368,87 @@ def MyModel(name,
 
         Sequential = tf.keras.Model(inputs=input, outputs=output)
 
+
+    elif name == "resnet":
+        def relu_bn(inputs: tf.Tensor) -> tf.Tensor:
+            relu = tf.keras.layers.ReLU()(inputs)
+            bn = tf.keras.layers.BatchNormalization()(relu)
+            return bn
+
+        def residual_block(x: tf.Tensor, downsample: bool, filters: int, kernel_size: int = 3) -> tf.Tensor:
+            y = tf.keras.layers.Conv2D(kernel_size=kernel_size,
+                                       strides=(1 if not downsample else 2),
+                                       filters=filters,
+                                       padding="same",
+                                       activation=non_linearities, kernel_initializer=initializer)(x)
+            y = relu_bn(y)
+            y = tf.keras.layers.Conv2D(kernel_size=kernel_size,
+                                       strides=1,
+                                       filters=filters,
+                                       padding="same",
+                                       activation=non_linearities, kernel_initializer=initializer)(y)
+
+            if downsample:
+                x = tf.keras.layers.Conv2D(kernel_size=1,
+                                           strides=2,
+                                           filters=filters,
+                                           padding="same",
+                                           activation=non_linearities, kernel_initializer=initializer)(x)
+            out = tf.keras.layers.Add()([x, y])
+            out = relu_bn(out)
+            return out
+
+        inputs = tf.keras.Input(shape=(64, 64, 3))
+        num_filters = 16
+
+        t = tf.keras.layers.BatchNormalization()(inputs)
+        t = tf.keras.layers.Conv2D(kernel_size=3,
+                                   strides=1,
+                                   filters=num_filters,
+                                   padding="same")(t)
+        t = relu_bn(t)
+
+        num_blocks_list = [2, 2, 2]
+        for i in range(len(num_blocks_list)):
+            num_blocks = num_blocks_list[i]
+            for j in range(num_blocks):
+                t = residual_block(t, downsample=(j == 0 and i != 0), filters=num_filters)
+            num_filters *= 2
+
+        t = tf.keras.layers.AveragePooling2D(4)(t)
+        t = tf.keras.layers.Flatten()(t)
+        t = tf.keras.layers.Dense(256, activation=non_linearities, kernel_initializer=initializer)(t)
+        t = tf.keras.layers.Dropout(0.5)(t)
+        outputs = tf.keras.layers.Dense(8, activation='softmax')(t)
+
+        Sequential = tf.keras.Model(inputs, outputs)
+
+
+    elif name == "medium_extended":  # val acc 0.59.. sense data augmentation
+        Sequential = tf.keras.Sequential([
+            tf.keras.layers.Conv2D(32, (3, 3), padding="same", input_shape=(64, 64, 3), activation='relu'),
+            #  tf.keras.layers.BatchNormalization(axis=1),
+            tf.keras.layers.MaxPooling2D(pool_size=(3, 3)),
+            # tf.keras.layers.Dropout(0.25),
+
+            tf.keras.layers.Conv2D(64, (3, 3), padding="same", activation='relu'),
+            #  tf.keras.layers.BatchNormalization(axis=1),
+            tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+            #  tf.keras.layers.Dropout(0.25),
+
+            tf.keras.layers.Conv2D(128, (3, 3), padding="same", activation='relu'),
+            #  tf.keras.layers.BatchNormalization(axis=1),
+            tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+            #  tf.keras.layers.Dropout(0.25),
+
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(512),
+            tf.keras.layers.Dense(64, activation='relu'),
+            #  tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Activation('relu'),
+            #  tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(8, activation="softmax")
+        ])
 
     elif name == "basic":
         Sequential = tf.keras.Sequential([
@@ -311,7 +519,34 @@ def MyModel(name,
             tf.keras.layers.Dense(64, activation='relu'),
             tf.keras.layers.Dense(8, activation="softmax")
         ])
-    
+    elif name == "medium_256input_2blocks":
+        Sequential = tf.keras.Sequential([
+            tf.keras.layers.Conv2D(32, (3, 3), padding="same", input_shape=(64, 64, 3), activation='relu'),
+            tf.keras.layers.Conv2D(32, (3, 3), padding="same", activation='relu'),
+            tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+            tf.keras.layers.Conv2D(128, (3, 3), padding="same", activation='relu'),
+            tf.keras.layers.Conv2D(128, (3, 3), padding="same", activation='relu'),
+            tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+            tf.keras.layers.Conv2D(256, (3, 3), padding="same", activation='relu'),
+            tf.keras.layers.Conv2D(256, (3, 3), padding="same", activation='relu'),
+
+            tf.keras.layers.BatchNormalization(axis=1),
+            tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+            tf.keras.layers.Dropout(0.25),
+
+            # tf.keras.layers.Conv2D(128, (3, 3), padding="same", activation='relu'),
+            # tf.keras.layers.BatchNormalization(axis=1),
+            # tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+            # tf.keras.layers.Dropout(0.25),
+
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(512),
+            tf.keras.layers.BatchNormalization(),
+            tf.keras.layers.Activation('relu'),
+            tf.keras.layers.Dropout(0.5),
+            tf.keras.layers.Dense(8, activation="softmax")
+        ])
+
     elif name == "autoencoder":
         encoder_inputs = tf.keras.layers.Input(shape=(img_dim, img_dim, 3))
         x = tf.keras.layers.Conv2D(32, 3, activation='relu', padding='same')(encoder_inputs)  # 64 x 64 x 3
@@ -361,4 +596,10 @@ def MyModel(name,
     return Sequential
 
 
+def AutoencoderModel(name, filters, kernel_size, strides, pool_size, dropout_rate, non_linearities):
+    pass  # TODO
 
+# if __name__ == "__main__":
+#     model = MyModel("MyModel", 32, 3, 1, 2, 0.5, "relu", 8)
+#     model.build(input_shape=(None, 256, 256, 3))
+#     model.summary()
