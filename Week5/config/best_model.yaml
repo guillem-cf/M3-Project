@@ -1,4 +1,4 @@
-name: 'best_model_with_regularization'
+name: '6_best_model_refining'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'best_model_with_regularization'
+    value: '6_best_model_refining'
   MODEL:
     value: 'best_model_sweep'
   DATASET_DIR:
@@ -22,7 +22,7 @@ parameters:
   IMG_HEIGHT:
     value: 64
   BATCH_SIZE:
-    value: 32
+    values: [8, 16,32,64]
   EPOCHS:
     value: 300
   LEARNING_RATE:
@@ -47,7 +47,7 @@ parameters:
   dim_dense:
     value: 256    
   filters1:
-    value: 64
+    value: 32
   filters2:
     value: 64
   batch_norm: 
@@ -58,6 +58,8 @@ parameters:
     values: [[0.6, 0.5, 0.3],[0.7,0.6,0.4], [0.8,0.7,0.5]]
   kernel_size:
     value: 3
+  kernel_regularizer:
+    values: True
   strides:  
     value: 1
   initializer:

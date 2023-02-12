@@ -47,6 +47,7 @@ def train(args):
                     dropout = wandb.config.dropout,
                     dropout_range = wandb.config.dropout_range,
                     kernel_size=wandb.config.kernel_size,
+                    kernel_regularizer=wandb.config.kernel_regularizer,
                     strides=wandb.config.strides, 
                     non_linearities=wandb.config.non_linearities,
                     initializer = wandb.config.initializer,

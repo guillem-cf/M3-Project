@@ -1,4 +1,4 @@
-name: '5_data_augmentation'
+name: 'prova_new_resnet'
 
 method: 'grid'
 
@@ -8,11 +8,9 @@ metric:
 
 parameters:
   experiment_name:
-    value: '5_data_augmentation'
+    value: 'prova_new_resnet'
   MODEL:
-    value: 'best_model_sweep'
-  num_params:
-    value: 0
+    value: 'resnet'
   DATASET_DIR:
     value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
   VALIDATION_SAMPLES:
@@ -27,33 +25,29 @@ parameters:
     value: 32
   EPOCHS:
     value: 300
-  CLR_LEARNING_RATE:
-    value: False
   LEARNING_RATE:
-    value: 0.001  # millor lr value
-  INIT_LR:
-    value: None
-  MAX_LR:
-    value: None
+    value: 0.001
   MOMENTUM:
     value: 0.9
   WEIGHT_DECAY:
     value: 0.0001
   OPTIMIZER:
-    value: 'adam'   # millor optimizer value
+    value: 'adam'
   LOSS:
     value: 'categorical_crossentropy'
 
   num_blocks:
-    value: 4
+    value: 4    # Agafar el millor valor
   second_layer:
-    value: True
-  num_denses: 
-    value: 3    # millor num_denses value
+    value: True # Agafar el millor valor
+  third_layer:
+    value: False
+  num_denses:
+    value: 3    # Agafar el millor valor
   dim_dense:
-    value: 256   # millor dim_dense value
+    value: 256  # Agafar el millor valor
   filters1:
-    value: 64
+    value: [16,32,32,64,64,128,128,256]
   filters2:
     value: 64
   batch_norm: 
@@ -61,35 +55,37 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    value: 0.2   # millor dropout_range value
+    value: [0.6, 0.5, 0.3]
   kernel_size:
     value: 3
+  kernel_regularizer:
+    value: True
   strides:  
     value: 1
   initializer:
-    value: 'HeUniform'
+    value: 'glorot_normal'
   non_linearities:
-    value: 'mish'
+    value: 'leaky_relu'
   pool_size:
     value: 2
 
 
   hardcore_data_augmentation:
-    value: False
+    value: True
   horizontal_flip:
     value: True
   vertical_flip:
     value: False
   rotation:
-    values: [15, 0]
+    value: 15
   width_shift:
-    values: [0.1, 0]
+    value: 0.1
   height_shift:
-    values: [0.1, 0]
+    value: 0.1
   shear_range:
-    values: [0.1, 0]
+    value: 0.1
   zoom_range:
-    values: [0.1, 0.2]
+    value: 0.1
   brightness_range:
-    value: [0.2, 1.0]
+    value: [0.5, 1.5]
 

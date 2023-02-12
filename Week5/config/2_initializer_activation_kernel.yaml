@@ -1,4 +1,4 @@
-name: 'activation_initializer_kernelsize_sweep'
+name: '2_activation_initializer_kernelsize_sweep'
 
 method: 'grid'
 
@@ -8,7 +8,7 @@ metric:
 
 parameters:
   experiment_name:
-    value: 'activation_initializer_kernelsize_sweep'
+    value: '2_activation_initializer_kernelsize_sweep'
   MODEL:
     value: 'best_model_sweep'
   DATASET_DIR:
@@ -40,10 +40,14 @@ parameters:
     value: 4    # Agafar el millor valor
   second_layer:
     value: True # Agafar el millor valor
+  third_layer:
+    value: False
   num_denses:
-    value: 4    # Agafar el millor valor
+    value: 3    # Agafar el millor valor
+  dim_dense:
+    value: 256  # Agafar el millor valor
   filters1:
-    value: 64   # Agafar el millor valor
+    value: 32   # Agafar el millor valor
   filters2:
     value: 64
   batch_norm: 
@@ -51,13 +55,15 @@ parameters:
   dropout:
     value: True
   dropout_range:
-    value: 0.3
+    value: [0.6, 0.5, 0.3]
   kernel_size:
     values: [3,5]
+  kernel_regularizer:
+    values: [True, False]
   strides:  
     value: 1
   initializer:
-    values: ['HeUniform', 'HeNormal', 'GlorotUniform', 'GlorotNormal']
+    values: ['glorot_uniform', 'glorot_normal', 'he_uniform', 'he_normal']
   non_linearities:
     values: ['leaky_relu', 'mish', 'relu'] 
   pool_size:
