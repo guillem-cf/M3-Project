@@ -10,9 +10,9 @@ parameters:
   experiment_name:
     value: 'prova_autoencoder'
   MODEL:
-    value: 'resnet'
+    value: 'autoencoder'
   DATASET_DIR:
-    value: '/ghome/group07/M3-Project-new/Week4/MIT_small_train_1'
+    value: './data/MIT_small_train_1'
   VALIDATION_SAMPLES:
     value: 807
   CALLBACKS:
