@@ -84,9 +84,11 @@ def train(args):
                   metrics=["accuracy"])
     
     if wandb.config.CALLBACKS:
+        from WandbCallback import WandbCallback
         wandb_callback = WandbCallback(input_type="images", labels=["coast", "forest", "highway", "inside_city", "mountain", "Opencountry", "street", "tallbuilding"],
                                    output_type="label", training_data=get_data_train(), validation_data=get_data_validation(), log_weights=True, log_gradients=True, log_evaluation=True, log_batch_frequency=10)
     else:
+        from WandbCallback import WandbCallback
         wandb_callback = WandbCallback()
         
     history = model.fit(

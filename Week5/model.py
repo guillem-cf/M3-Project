@@ -554,20 +554,17 @@ def MyModel(name,
         x = tf.keras.layers.Conv2D(32, 3, activation='relu', padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)  # 32 x 32 x 32
-        x = tf.keras.layers.Dropout(0.2)(x)
         x = tf.keras.layers.Conv2D(64, 3, activation='relu', padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Conv2D(64, 3, activation='relu', padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)  # 16 x 16 x 64
-        x = tf.keras.layers.Dropout(0.3)(x)
 
         x = tf.keras.layers.Conv2D(128, 3, activation='relu', padding='same')(x)  # 16 x 16 x 128
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.Conv2D(128, 3, activation='relu', padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(x)  # 8 x 8 x 64
-        x = tf.keras.layers.Dropout(0.4)(x)
 
         x = tf.keras.layers.Conv2D(32, 3, activation='relu', padding='same')(x)  # 8 x 8 x 32
         x = tf.keras.layers.BatchNormalization()(x)
@@ -590,7 +587,7 @@ def MyModel(name,
         x = tf.keras.layers.Conv2D(32, 3, activation='relu', padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        decoder_outputs = tf.keras.layers.Dense(8, activation="softmax")(x)
+        decoder_outputs = tf.keras.layers.Dense(8, activation='softmax', kernel_initializer="HeUniform")(x)
 
         encoder = tf.keras.Model(encoder_inputs, encoder_outputs, name="encoder")
         decoder = tf.keras.Model(encoder_outputs, decoder_outputs, name="decoder")
