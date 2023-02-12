@@ -24,6 +24,7 @@ wandb/
 ./Week5/network_draw/
 ./Week5/wandb/
 ./Week5/model_old.py
+./Week5/job/
 
 
 *.err 
