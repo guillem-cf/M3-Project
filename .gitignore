@@ -17,14 +17,7 @@ wandb/
 *.h5
 *.err
 *.out
-./Week5/config/
-./Week5/config_resnet/
-./Week5/images/
-./Week5/checkpoint/
-./Week5/network_draw/
-./Week5/wandb/
-./Week5/model_old.py
-./Week5/job/
+./Week5/other/
 
 
 *.err 
